@@ -11,7 +11,7 @@ Create totally custom view controller transitions without the complexity of impl
 [![License](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat
 )](http://mit-license.org)
 
-![](Readme/simple.gif) ![](Readme/pan.gif)
+![](Readme/simple.gif) ![](Readme/pan.gif) ![](Readme/table.gif) 
 
 ##Requirements
 - iOS 8.1+
