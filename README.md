@@ -2,7 +2,7 @@
 
 Easy and tidy way for creating custom UIViewController transitions for iOS
 
-Create totally custom view controller transitions without the complexity of implementing UIViewControllerAnimatedTransitioning protocol or subclassing UIPercentDrivenInteractiveTransition. The only thing you need to do is to use transitioningDelegate wrappers in this framework and provide your custom UIView animation code. 
+Create totally custom view controller transitions without the complexity of implementing UIViewControllerAnimatedTransitioning protocol or subclassing UIPercentDrivenInteractiveTransition. You just need to use transitioningDelegate wrappers in this framework and provide your UIView animation code. 
 
 [![Platform](http://img.shields.io/badge/platform-ios-blue.svg?style=flat
 )](https://developer.apple.com/iphone/index.action)
@@ -11,7 +11,7 @@ Create totally custom view controller transitions without the complexity of impl
 [![License](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat
 )](http://mit-license.org)
 
-![](Readme/simple.gif) ![](Readme/pan.gif) ![](Readme/table.gif) 
+![](Readme/simple.gif) ![](Readme/pan.gif)
 
 ##Requirements
 - iOS 8.1+
