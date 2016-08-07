@@ -1,0 +1,16 @@
+PODS:
+  - AICustomViewControllerTransition (1.0.0)
+
+DEPENDENCIES:
+  - AICustomViewControllerTransition (from `..`)
+
+EXTERNAL SOURCES:
+  AICustomViewControllerTransition:
+    :path: ..
+
+SPEC CHECKSUMS:
+  AICustomViewControllerTransition: 624fa9a47ae9fa4110d62791ea36d88f8139c946
+
+PODFILE CHECKSUM: dcb5116787b029422bf9d9c7eb53e2421399fbee
+
+COCOAPODS: 1.0.1

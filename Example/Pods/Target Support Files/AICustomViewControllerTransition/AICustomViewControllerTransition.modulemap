@@ -1,0 +1,6 @@
+framework module AICustomViewControllerTransition {
+  umbrella header "AICustomViewControllerTransition-umbrella.h"
+
+  export *
+  module * { export * }
+}
