@@ -216,7 +216,12 @@ class ExpandingCellsTableViewController: UIViewController, UITableViewDelegate, 
 		
 		// Present view controller as usual
 		// In this example, modal view controller can be dismissed either as usual(dismissViewController) or via user interaction via pan gesture recognizer
-		self.presentViewController(self.detailViewController, animated: true, completion: nil)
+		// There seems to be a bug in SDK, see here: http://openradar.appspot.com/19563577
+		// Calling presentViewController() within didSelectRowAtIndexPath() gets even slower with UIViewControllerAnimatedTransitioning
+		// Temporary solution is dispatch_async() with main queue
+		dispatch_async(dispatch_get_main_queue()) {
+			self.presentViewController(self.detailViewController, animated: true, completion: nil)
+		}
 	}
 	
 }
