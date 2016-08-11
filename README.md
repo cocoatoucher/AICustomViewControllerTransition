@@ -11,7 +11,7 @@ Create view controller transitions with no limits and without the complexity of 
 [![License](http://img.shields.io/badge/license-MIT-lightgrey.svg?style=flat
 )](http://mit-license.org)
 
-![](Readme/player.gif) ![](Readme/simple.gif) ![](Readme/pan.gif) ![](Readme/table.gif) 
+![](Readme/video.gif) ![](Readme/simple.gif) ![](Readme/pan.gif) ![](Readme/table.gif) 
 
 Drag Down icon used in examples and screenshots is by IconMafia from thenounproject.com (https://thenounproject.com/search/?q=drag&i=463918)
 
