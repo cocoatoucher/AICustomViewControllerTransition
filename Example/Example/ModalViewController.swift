@@ -13,7 +13,7 @@ class ModalViewController: UIViewController {
 	@IBOutlet weak var headerView: UIView!
 	@IBOutlet weak var headerImageView: UIImageView!
 	@IBOutlet weak var panIndicatorView: UIView!
-	var dismissCallback: ((panGestureRecognizer: UIPanGestureRecognizer, translatedPoint: CGPoint) -> Void)?
+	var handlePan: ((panGestureRecognizer: UIPanGestureRecognizer) -> Void)?
 	var isPanIndicatorHidden: Bool = false {
 		didSet {
 			if (self.panIndicatorView) != nil {
@@ -37,8 +37,8 @@ class ModalViewController: UIViewController {
 		self.dismissViewControllerAnimated(true, completion: nil)
 	}
 	
-	@IBAction func panAction(sender: UIPanGestureRecognizer) {
-		self.dismissCallback?(panGestureRecognizer: sender, translatedPoint: sender.translationInView(self.view))
+	@IBAction func handlePan(sender: UIPanGestureRecognizer) {
+		self.handlePan?(panGestureRecognizer: sender)
 	}
 
 }

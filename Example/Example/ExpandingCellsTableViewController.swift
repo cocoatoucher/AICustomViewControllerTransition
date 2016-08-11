@@ -29,18 +29,24 @@ class ExpandingCellsTableViewController: UIViewController, UITableViewDelegate, 
 	// Storing pan ratio for keeping track of progress with pan gesture recognizer
 	var lastPanRatio: CGFloat = 0.0
 	
+	var lastDetailViewOriginY: CGFloat = 0.0
+	
 	lazy var detailViewController: ModalViewController = {
 		let vc = self.storyboard?.instantiateViewControllerWithIdentifier("detailViewController") as! ModalViewController
 		vc.modalPresentationStyle = .Custom
 		vc.transitioningDelegate = self.customTransitioningDelegate
 		// Pan gesture recognizer feedback from detailViewController's view is captured via this callback closure
-		vc.dismissCallback = {(panGestureRecozgnizer, translatedPoint) in
+		vc.handlePan = {(panGestureRecozgnizer) in
+			
+			let translatedPoint = panGestureRecozgnizer.translationInView(self.view)
 			
 			if (panGestureRecozgnizer.state == .Began) {
 				// Begin dismissing view controller
 				self.customTransitioningDelegate.beginDismissing(viewController: vc)
+				self.lastDetailViewOriginY = vc.view.frame.origin.y
+				
 			} else if (panGestureRecozgnizer.state == .Changed) {
-				let ratio = (translatedPoint.y) / CGRectGetHeight(vc.view.bounds)
+				let ratio = (self.lastDetailViewOriginY + translatedPoint.y) / CGRectGetHeight(vc.view.bounds)
 				// Store lastPanRatio for next callback
 				self.lastPanRatio = ratio
 				

@@ -4,6 +4,7 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
         <!--Simple Transition View Controller-->
@@ -115,6 +116,29 @@
                                         </tableViewCellContentView>
                                         <connections>
                                             <segue destination="kwX-MO-Vbr" kind="show" id="2Am-mQ-Mxe"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="Yqm-MN-eEX">
+                                        <rect key="frame" x="0.0" y="196" width="600" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Yqm-MN-eEX" id="OhB-YG-3e1">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Video player" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8D2-2f-ieQ">
+                                                    <rect key="frame" x="20" y="11" width="95" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="8D2-2f-ieQ" firstAttribute="leading" secondItem="OhB-YG-3e1" secondAttribute="leading" constant="20" id="OcV-pb-TN0"/>
+                                                <constraint firstItem="8D2-2f-ieQ" firstAttribute="top" secondItem="OhB-YG-3e1" secondAttribute="top" constant="11" id="acZ-p8-ce2"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <segue destination="oLi-iD-mNf" kind="show" id="CR0-Kx-bJQ"/>
                                         </connections>
                                     </tableViewCell>
                                 </cells>
@@ -329,7 +353,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gFN-u7-iD0" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <panGestureRecognizer minimumNumberOfTouches="1" id="bPI-fO-kyA">
                     <connections>
-                        <action selector="panAction:" destination="ame-Sp-ZkK" id="f7d-au-J34"/>
+                        <action selector="handlePan:" destination="ame-Sp-ZkK" id="uuO-AQ-ASW"/>
                     </connections>
                 </panGestureRecognizer>
             </objects>
@@ -403,9 +427,143 @@
             </objects>
             <point key="canvasLocation" x="-428" y="1117"/>
         </scene>
+        <!--Video Player Transition View Controller-->
+        <scene sceneID="Dy2-on-jdi">
+            <objects>
+                <viewController storyboardIdentifier="videoPlayerTransitionViewController" id="oLi-iD-mNf" customClass="VideoPlayerTransitionViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="RdI-KN-Dzt"/>
+                        <viewControllerLayoutGuide type="bottom" id="bFa-An-KxS"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="42k-Hv-oQo">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Ck-DE-61I">
+                                <rect key="frame" x="274" y="285" width="53" height="30"/>
+                                <state key="normal" title="Present"/>
+                                <connections>
+                                    <action selector="presentAction:" destination="oLi-iD-mNf" eventType="touchUpInside" id="xUf-Ab-5gf"/>
+                                </connections>
+                            </button>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OhB-SW-Rw7">
+                                <rect key="frame" x="435" y="495" width="160" height="100"/>
+                                <gestureRecognizers/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="100" id="3V9-uV-Ef8"/>
+                                    <constraint firstAttribute="width" constant="160" id="UF5-IR-05M"/>
+                                </constraints>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="YUc-ks-ETh" appends="YES" id="H4c-kj-aou"/>
+                                    <outletCollection property="gestureRecognizers" destination="Bhs-SQ-AFb" appends="YES" id="JgZ-Za-NyH"/>
+                                </connections>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
+                        <constraints>
+                            <constraint firstItem="bFa-An-KxS" firstAttribute="top" secondItem="OhB-SW-Rw7" secondAttribute="bottom" constant="5" id="NAN-XH-PFj"/>
+                            <constraint firstItem="0Ck-DE-61I" firstAttribute="centerX" secondItem="42k-Hv-oQo" secondAttribute="centerX" id="bDT-Zo-NC7"/>
+                            <constraint firstItem="0Ck-DE-61I" firstAttribute="centerY" secondItem="42k-Hv-oQo" secondAttribute="centerY" id="bDr-mq-Ekp"/>
+                            <constraint firstAttribute="trailing" secondItem="OhB-SW-Rw7" secondAttribute="trailing" constant="5" id="xcD-Un-8dK"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="thumbnailVideoContainerView" destination="OhB-SW-Rw7" id="MFV-NR-dCt"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cgP-Oo-BVa" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="YUc-ks-ETh">
+                    <connections>
+                        <action selector="handlePresentPan:" destination="oLi-iD-mNf" id="EoZ-Vs-37N"/>
+                    </connections>
+                </panGestureRecognizer>
+                <tapGestureRecognizer id="Bhs-SQ-AFb">
+                    <connections>
+                        <action selector="presentFromThumbnailAction:" destination="oLi-iD-mNf" id="pMR-jj-6kZ"/>
+                    </connections>
+                </tapGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="-1128" y="1117"/>
+        </scene>
+        <!--Video Player Modal View Controller-->
+        <scene sceneID="StO-jI-S2J">
+            <objects>
+                <viewController storyboardIdentifier="videoPlayerViewController" id="WvK-bh-Pd8" customClass="VideoPlayerModalViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="IaN-G1-qbH"/>
+                        <viewControllerLayoutGuide type="bottom" id="jsp-vB-c4E"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="M0H-yr-4vt">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZHE-Ow-EcV">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <color key="backgroundColor" red="0.80062006100000005" green="0.85098039219999999" blue="0.28710442609999998" alpha="1" colorSpace="calibratedRGB"/>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6Of-4q-nNY" customClass="VideoView" customModule="Example" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="200"/>
+                                <color key="backgroundColor" red="0.1542029748" green="0.4295560397" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dnm-fF-yWu">
+                                <rect key="frame" x="20" y="20" width="44" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="EUt-d6-4x9"/>
+                                    <constraint firstAttribute="width" constant="44" id="y4e-Ib-8j4"/>
+                                </constraints>
+                                <state key="normal" image="down">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="dismissAction:" destination="WvK-bh-Pd8" eventType="touchUpInside" id="w0e-Vx-7br"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <gestureRecognizers/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="ZHE-Ow-EcV" secondAttribute="trailing" id="7yC-TA-ycb"/>
+                            <constraint firstItem="Dnm-fF-yWu" firstAttribute="top" secondItem="M0H-yr-4vt" secondAttribute="top" constant="20" id="Fny-de-aLq"/>
+                            <constraint firstItem="ZHE-Ow-EcV" firstAttribute="top" secondItem="M0H-yr-4vt" secondAttribute="top" id="H9z-Mx-uCE"/>
+                            <constraint firstItem="6Of-4q-nNY" firstAttribute="top" secondItem="M0H-yr-4vt" secondAttribute="top" id="Hkp-CV-fSY"/>
+                            <constraint firstAttribute="trailing" secondItem="6Of-4q-nNY" secondAttribute="trailing" id="Sg6-Bt-pcT"/>
+                            <constraint firstItem="6Of-4q-nNY" firstAttribute="height" secondItem="M0H-yr-4vt" secondAttribute="height" multiplier="1:3" id="VS3-Iu-Gcs"/>
+                            <constraint firstItem="jsp-vB-c4E" firstAttribute="top" secondItem="6Of-4q-nNY" secondAttribute="bottom" id="aMn-S8-3Vt"/>
+                            <constraint firstItem="Dnm-fF-yWu" firstAttribute="leading" secondItem="M0H-yr-4vt" secondAttribute="leading" constant="20" id="dqh-xx-z6N"/>
+                            <constraint firstItem="jsp-vB-c4E" firstAttribute="top" secondItem="ZHE-Ow-EcV" secondAttribute="bottom" id="hYP-iF-1So"/>
+                            <constraint firstItem="6Of-4q-nNY" firstAttribute="leading" secondItem="M0H-yr-4vt" secondAttribute="leading" id="vyp-CG-VAq"/>
+                            <constraint firstItem="ZHE-Ow-EcV" firstAttribute="leading" secondItem="M0H-yr-4vt" secondAttribute="leading" id="zzL-V3-YJy"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="aMn-S8-3Vt"/>
+                            </mask>
+                        </variation>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="wwe-x9-O07" appends="YES" id="H4h-m6-vqI"/>
+                        </connections>
+                    </view>
+                    <connections>
+                        <outlet property="backgroundView" destination="ZHE-Ow-EcV" id="D64-AF-y1s"/>
+                        <outlet property="dismissButton" destination="Dnm-fF-yWu" id="GQv-hd-vn2"/>
+                        <outlet property="videoView" destination="6Of-4q-nNY" id="FMz-77-gGX"/>
+                        <outlet property="videoViewAtBottomConstraint" destination="aMn-S8-3Vt" id="edA-lX-0hk"/>
+                        <outlet property="videoViewHeightConstraint" destination="VS3-Iu-Gcs" id="3qk-ux-VOr"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1ql-oG-MvH" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <panGestureRecognizer minimumNumberOfTouches="1" id="wwe-x9-O07">
+                    <connections>
+                        <action selector="handlePan:" destination="WvK-bh-Pd8" id="Eqt-jV-Uag"/>
+                    </connections>
+                </panGestureRecognizer>
+            </objects>
+            <point key="canvasLocation" x="-1128" y="1809"/>
+        </scene>
     </scenes>
     <resources>
         <image name="1" width="700" height="394"/>
+        <image name="down" width="30" height="38"/>
         <image name="drag_down" width="25" height="32"/>
         <image name="drag_vertical" width="33" height="32"/>
     </resources>

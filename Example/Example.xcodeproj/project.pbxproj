@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		221B1F931D5C7926009075FF /* video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 221B1F901D5C7926009075FF /* video.mp4 */; };
+		221B1F941D5C7926009075FF /* VideoPlayerModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 221B1F911D5C7926009075FF /* VideoPlayerModalViewController.swift */; };
+		221B1F951D5C7926009075FF /* VideoPlayerTransitionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 221B1F921D5C7926009075FF /* VideoPlayerTransitionViewController.swift */; };
 		4E9C217A1D3D8625003ED221 /* PanToViewTransitionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9C21791D3D8625003ED221 /* PanToViewTransitionViewController.swift */; };
 		4E9C21DE1D527DF3003ED221 /* SimpleTransitionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9C21DD1D527DF3003ED221 /* SimpleTransitionViewController.swift */; };
 		4EC50A2F1D31867500D5FD17 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC50A2E1D31867500D5FD17 /* AppDelegate.swift */; };
@@ -40,6 +43,9 @@
 
 /* Begin PBXFileReference section */
 		1E473F64E5B69B61F0465E4F /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
+		221B1F901D5C7926009075FF /* video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = video.mp4; sourceTree = "<group>"; };
+		221B1F911D5C7926009075FF /* VideoPlayerModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerModalViewController.swift; sourceTree = "<group>"; };
+		221B1F921D5C7926009075FF /* VideoPlayerTransitionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerTransitionViewController.swift; sourceTree = "<group>"; };
 		4E9C21791D3D8625003ED221 /* PanToViewTransitionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PanToViewTransitionViewController.swift; sourceTree = "<group>"; };
 		4E9C21DD1D527DF3003ED221 /* SimpleTransitionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTransitionViewController.swift; sourceTree = "<group>"; };
 		4EC50A2B1D31867500D5FD17 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -128,10 +134,13 @@
 				4EC50A601D32424000D5FD17 /* TableViewCell.swift */,
 				4E9C21791D3D8625003ED221 /* PanToViewTransitionViewController.swift */,
 				4EC50A661D3258B100D5FD17 /* ModalViewController.swift */,
+				221B1F921D5C7926009075FF /* VideoPlayerTransitionViewController.swift */,
+				221B1F911D5C7926009075FF /* VideoPlayerModalViewController.swift */,
 				4EC50A321D31867500D5FD17 /* Main.storyboard */,
 				4EC50A351D31867500D5FD17 /* Assets.xcassets */,
 				4EC50A371D31867500D5FD17 /* LaunchScreen.storyboard */,
 				4EC50A3A1D31867500D5FD17 /* Info.plist */,
+				221B1F901D5C7926009075FF /* video.mp4 */,
 			);
 			path = Example;
 			sourceTree = "<group>";
@@ -273,6 +282,7 @@
 				4EC50A391D31867500D5FD17 /* LaunchScreen.storyboard in Resources */,
 				4EC50A361D31867500D5FD17 /* Assets.xcassets in Resources */,
 				4EC50A341D31867500D5FD17 /* Main.storyboard in Resources */,
+				221B1F931D5C7926009075FF /* video.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -347,8 +357,10 @@
 			files = (
 				4EC50A691D32731200D5FD17 /* ExpandingCellsTableViewController.swift in Sources */,
 				4EC50A671D3258B100D5FD17 /* ModalViewController.swift in Sources */,
+				221B1F951D5C7926009075FF /* VideoPlayerTransitionViewController.swift in Sources */,
 				4E9C21DE1D527DF3003ED221 /* SimpleTransitionViewController.swift in Sources */,
 				4E9C217A1D3D8625003ED221 /* PanToViewTransitionViewController.swift in Sources */,
+				221B1F941D5C7926009075FF /* VideoPlayerModalViewController.swift in Sources */,
 				4EC50A611D32424000D5FD17 /* TableViewCell.swift in Sources */,
 				4EC50A2F1D31867500D5FD17 /* AppDelegate.swift in Sources */,
 			);

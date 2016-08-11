@@ -18,8 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
 		// Pushing one of the examples for demonstration
 		let navigationController = self.window?.rootViewController as! UINavigationController
-		let expandingCellsTableViewController = navigationController.storyboard?.instantiateViewControllerWithIdentifier("expandingCellsTableViewController")
-		navigationController.pushViewController(expandingCellsTableViewController!, animated: true)
+		let videoPlayerTransitionViewController = navigationController.storyboard?.instantiateViewControllerWithIdentifier("videoPlayerTransitionViewController")
+		navigationController.pushViewController(videoPlayerTransitionViewController!, animated: true)
 		
 		return true
 	}

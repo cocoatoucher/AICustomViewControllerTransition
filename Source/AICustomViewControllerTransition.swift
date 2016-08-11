@@ -367,6 +367,11 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 }
 
 //MARK: - SimpleTransitioningDelegate
+/**
+	SimpleTransitioningDelegate
+	Use for simple view controller transitions that doesn't require user interaction driven transition by providing your animation blocks with its callback closure properties.
+	- Implements UIViewControllerTransitioningDelegate
+*/
 public class SimpleTransitioningDelegate : NSObject, UIViewControllerTransitioningDelegate {
 	
 	public var transitionPresent: TransitionViewController {
@@ -401,6 +406,12 @@ public class SimpleTransitioningDelegate : NSObject, UIViewControllerTransitioni
 }
 
 //MARK: - InteractiveTransitioningDelegate
+/**
+	InteractiveTransitioningDelegate
+	Use for user interaction driven transitions by providing your animation blocks with its callback closure properties.
+	- Subclasses UIPercentDrivenInteractiveTransition
+	- Implements UIViewControllerTransitioningDelegate
+*/
 public class InteractiveTransitioningDelegate : UIPercentDrivenInteractiveTransition, UIViewControllerTransitioningDelegate {
 	
 	/**
