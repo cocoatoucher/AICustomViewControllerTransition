@@ -1,7 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'AICustomViewControllerTransition'
   s.version = '1.0.2'
-  s.version = '1.0.1'
   s.license = 'MIT'
   s.summary = 'Easy and tidy way for creating custom UIViewController transitions for iOS'
   s.homepage = 'https://github.com/cocoatoucher/AICustomViewControllerTransition'
