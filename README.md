@@ -13,6 +13,8 @@ Create totally custom view controller transitions without the complexity of impl
 
 ![](Readme/simple.gif) ![](Readme/pan.gif) ![](Readme/table.gif) 
 
+Drag Down icon used in examples and screenshots is by IconMafia from thenounproject.com (https://thenounproject.com/search/?q=drag&i=463918)
+
 ##Requirements
 - iOS 8.1+
 - Xcode 7.3
