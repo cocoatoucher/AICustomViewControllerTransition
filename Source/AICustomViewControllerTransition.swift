@@ -136,7 +136,7 @@ private enum TransitionState {
 		Handy var to get whether the transition state is none
 	*/
 	var isNone: Bool {
-		if case let .None = self {
+		if case .None = self {
 			return true
 		}
 		return false
@@ -148,14 +148,14 @@ private enum TransitionState {
 	var isInteractive: Bool {
 		switch self {
 		case .Start(let transitionType):
-			if case let .Interactive = transitionType {
+			if case .Interactive = transitionType {
 				return true
 			}
 			return false
 		case .InteractivePercentage:
 			return true
 		case .Finish(let transitionType):
-			if case let .Interactive = transitionType {
+			if case .Interactive = transitionType {
 				return true
 			}
 			return false
@@ -203,7 +203,7 @@ private enum TransitionState {
 	var isPercentDriven: Bool {
 		switch self {
 		case .Start(let transitionType):
-			if case let .Interactive = transitionType {
+			if case .Interactive = transitionType {
 				return true
 			}
 			return false
@@ -218,7 +218,7 @@ private enum TransitionState {
 		Handy var to get whether the transition has started
 	*/
 	var didTransitionStart: Bool {
-		if case let .Start = self {
+		if case .Start = self {
 			return true
 		}
 		return false
@@ -240,7 +240,7 @@ private enum TransitionState {
 		Handy var to get whether the transition has cancelled
 	*/
 	var isInteractiveTransitionCancelled: Bool {
-		if case let .CancelInteractive = self {
+		if case .CancelInteractive = self {
 			return true
 		}
 		return false
@@ -259,7 +259,7 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 	*/
 	var transitionPresent: TransitionViewController = {(fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) in
 		
-		if case let .Interactive = transitionType {
+		if case .Interactive = transitionType {
 			// Set initial frame only if the transition is not interactive
 			let beginFrame = CGRectOffset(containerView.bounds, 0, CGRectGetHeight(containerView.bounds))
 			toViewController.view.frame = beginFrame
