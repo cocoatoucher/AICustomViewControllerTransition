@@ -143,6 +143,10 @@ myModalViewController.transitioningDelegate = myInteractiveTransitioningDelegate
 self.presentViewController(self.detailViewController, animated: true, completion: nil)
 ```
 
+## Documentation
+
+http://cocoadocs.org/docsets/AICustomViewControllerTransition/
+
 ## License
 
 AICustomViewControllerTransition is released under the MIT license. See LICENSE for details.
