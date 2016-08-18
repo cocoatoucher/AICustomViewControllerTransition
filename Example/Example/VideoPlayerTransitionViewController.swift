@@ -56,7 +56,7 @@ class VideoPlayerTransitionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-		customTransitioningDelegate.transitionPresent = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, isInteractive: Bool, isInteractiveTransitionCancelled: Bool, completion: () -> Void) in
+		customTransitioningDelegate.transitionPresent = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) in
 			
 			guard let weakSelf = self else {
 				return
@@ -64,7 +64,7 @@ class VideoPlayerTransitionViewController: UIViewController {
 			
 			let videoPlayerViewController = toViewController as! VideoPlayerModalViewController
 			
-			if (!isInteractive) {
+			if case .Simple = transitionType {
 				if (weakSelf.videoPlayerViewControllerInitialFrame != nil) {
 					videoPlayerViewController.view.frame = weakSelf.videoPlayerViewControllerInitialFrame!
 					weakSelf.videoPlayerViewControllerInitialFrame = nil
@@ -89,7 +89,7 @@ class VideoPlayerTransitionViewController: UIViewController {
 			})
 		}
 		
-		customTransitioningDelegate.transitionDismiss = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, isInteractive: Bool, isInteractiveTransitionCancelled: Bool, completion: () -> Void) in
+		customTransitioningDelegate.transitionDismiss = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) in
 			
 			guard let weakSelf = self else {
 				return

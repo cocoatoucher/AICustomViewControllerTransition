@@ -55,7 +55,7 @@ let myInteractiveTransitioningDelegate = InteractiveTransitioningDelegate()
 Animate transition for presenting your modal view controller. See SimpleTransitionViewController example in the Example project. 
 
 ```swift
-mySimpleTransitioningDelegate.transitionPresent = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, isInteractive: Bool, isInteractiveTransitionCancelled: Bool, completion: () -> Void) in
+mySimpleTransitioningDelegate.transitionPresent = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) in
 
 	UIView.animateWithDuration(animationDuration, animations: {
 		// Your custom presentation animation here
@@ -72,7 +72,7 @@ mySimpleTransitioningDelegate.transitionPresent = { [weak self] (fromViewControl
 Animate transition for dismissing your modal view controller. See SimpleTransitionViewController example in the Example project. 
 
 ```swift
-mySimpleTransitioningDelegate.transitionDismiss = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, isInteractive: Bool, isInteractiveTransitionCancelled: Bool, completion: () -> Void) in
+mySimpleTransitioningDelegate.transitionDismiss = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) in
 
 	UIView.animateWithDuration(animationDuration, animations: {
 		// Your custom dismissal animation here

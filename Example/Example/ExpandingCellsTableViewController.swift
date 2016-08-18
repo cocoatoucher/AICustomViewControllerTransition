@@ -65,7 +65,7 @@ class ExpandingCellsTableViewController: UIViewController, UITableViewDelegate, 
 		super.viewDidLoad()
 		
 		// Animate presentation transition
-		customTransitioningDelegate.transitionPresent = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, isInteractive: Bool, isInteractiveTransitionCancelled: Bool, completion: () -> Void) in
+		customTransitioningDelegate.transitionPresent = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) in
 			
 			guard let weakSelf = self else {
 				return
@@ -82,32 +82,36 @@ class ExpandingCellsTableViewController: UIViewController, UITableViewDelegate, 
 			let originalFrame = containerView.convertRect(cell.innerView.frame, fromView: cell.innerView.superview)
 			
 			// If interactive transition is cancelled, there is no need to setup the transitionView and reset modalViewController's frame, since the final values will be used to present back to the previous state
-			if !isInteractiveTransitionCancelled {
-				
-				// Move transitionView in the same place with the cell
-				weakSelf.transitionViewTopSpace.constant = CGRectGetMinY(originalFrame)
-				weakSelf.view.layoutIfNeeded()
-				
-				// Start replicating the cell's inner view and hide the cell's inner view
-				weakSelf.transitionView.hidden = false
-				cell.innerView.hidden = true
-				weakSelf.transitionImageView.image = cell.thumbnail.image
-				
-				// Replicate cell in modalViewController's header image
-				(toViewController as! ModalViewController).headerImageView.image = cell.thumbnail.image
-				
-				// Set initial opacity to 0
-				toViewController.view.alpha = 0.0
-				
-				// Set initial frame to right above the cell, aligning top
-				toViewController.view.frame = CGRectMake(0, CGRectGetMinY(originalFrame), CGRectGetWidth(containerView.bounds), CGRectGetHeight(containerView.bounds))
+			if let isInteractiveTransitionCancelled = transitionType.isInteractiveTransitionCancelled {
+				if (isInteractiveTransitionCancelled) {
+					// Move transitionView in the same place with the cell
+					weakSelf.transitionViewTopSpace.constant = CGRectGetMinY(originalFrame)
+					weakSelf.view.layoutIfNeeded()
+					
+					// Start replicating the cell's inner view and hide the cell's inner view
+					weakSelf.transitionView.hidden = false
+					cell.innerView.hidden = true
+					weakSelf.transitionImageView.image = cell.thumbnail.image
+					
+					// Replicate cell in modalViewController's header image
+					(toViewController as! ModalViewController).headerImageView.image = cell.thumbnail.image
+					
+					// Set initial opacity to 0
+					toViewController.view.alpha = 0.0
+					
+					// Set initial frame to right above the cell, aligning top
+					toViewController.view.frame = CGRectMake(0, CGRectGetMinY(originalFrame), CGRectGetWidth(containerView.bounds), CGRectGetHeight(containerView.bounds))
+				}
 			}
 			
 			// Move transitionView to top of the screen
 			weakSelf.transitionViewTopSpace.constant = 0.0
 			weakSelf.view.setNeedsUpdateConstraints()
 			
-			UIView.animateWithDuration(0.5, delay:0.0, options: .CurveEaseInOut, animations: {
+			let speedPerPixel = 0.5 / Double(CGRectGetHeight(containerView.bounds))
+			let animationDuration = max(speedPerPixel * Double(CGRectGetMinY(toViewController.view.frame)), defaultTransitionAnimationDuration)
+			
+			UIView.animateWithDuration(animationDuration, delay:0.0, options: .CurveEaseInOut, animations: {
 				// Animate the transitionView
 				weakSelf.view.layoutIfNeeded()
 				
@@ -121,7 +125,7 @@ class ExpandingCellsTableViewController: UIViewController, UITableViewDelegate, 
 			})
 		}
 		
-		customTransitioningDelegate.transitionDismiss = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, isInteractive: Bool, isInteractiveTransitionCancelled: Bool, completion: () -> Void) in
+		customTransitioningDelegate.transitionDismiss = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) in
 			
 			guard let weakSelf = self else {
 				return
@@ -143,7 +147,10 @@ class ExpandingCellsTableViewController: UIViewController, UITableViewDelegate, 
 			weakSelf.transitionViewTopSpace.constant = verticalMoveAmount
 			weakSelf.view.setNeedsUpdateConstraints()
 			
-			UIView.animateWithDuration(0.5, animations: {
+			let speedPerPixel = 0.5 / Double(CGRectGetHeight(containerView.bounds))
+			let animationDuration = max(speedPerPixel * Double(CGRectGetMinY(toViewController.view.frame)), defaultTransitionAnimationDuration)
+			
+			UIView.animateWithDuration(animationDuration, animations: {
 				
 				weakSelf.view.layoutIfNeeded()
 				

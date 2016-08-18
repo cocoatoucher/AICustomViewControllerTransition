@@ -30,7 +30,7 @@ class SimpleTransitionViewController: UIViewController {
 		
 		// Here only transitionDismiss is provided, modal view controller is dismissed with faded style, while it is presented in cover vertical style
 		// Default value is used for transitionPresent defined in AICustomViewControllerTransition
-		customTransitioningDelegate.transitionDismiss = { (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, isInteractive: Bool, isInteractiveTransitionCancelled: Bool, completion: () -> Void) in
+		customTransitioningDelegate.transitionDismiss = { (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) in
 			
 			UIView.animateWithDuration(defaultTransitionAnimationDuration, animations: {
 				

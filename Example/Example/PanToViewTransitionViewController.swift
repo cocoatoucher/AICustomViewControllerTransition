@@ -31,7 +31,7 @@ class PanToViewTransitionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-		customTransitioningDelegate.transitionPresent = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, isInteractive: Bool, isInteractiveTransitionCancelled: Bool, completion: () -> Void) in
+		customTransitioningDelegate.transitionPresent = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) in
 			
 			guard let weakSelf = self else {
 				return
@@ -39,7 +39,7 @@ class PanToViewTransitionViewController: UIViewController {
 			
 			var panViewEndFrame = weakSelf.panView.frame
 			// If transition is interactive only the final values below will be used
-			if (!isInteractive) {
+			if case .Simple = transitionType {
 				panViewEndFrame.origin.y = -CGRectGetHeight(panViewEndFrame)
 				
 				// Move modalViewController to the end of pan view
@@ -50,7 +50,7 @@ class PanToViewTransitionViewController: UIViewController {
 				// Move view controller to cover the screen
 				toViewController.view.frame = containerView.bounds
 				// If transition is interactive, it will be moved by pan gesture recognizer
-				if (!isInteractive) {
+				if case .Simple = transitionType {
 					weakSelf.panView.frame = panViewEndFrame
 				}
 				
@@ -59,7 +59,7 @@ class PanToViewTransitionViewController: UIViewController {
 			})
 		}
 		
-		customTransitioningDelegate.transitionDismiss = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, isInteractive: Bool, isInteractiveTransitionCancelled: Bool, completion: () -> Void) in
+		customTransitioningDelegate.transitionDismiss = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) in
 			
 			guard let weakSelf = self else {
 				return
