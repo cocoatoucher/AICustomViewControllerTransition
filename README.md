@@ -17,11 +17,11 @@ Drag Down icon used in examples and screenshots is by IconMafia from thenounproj
 
 ##Requirements
 - iOS 8.1+
-- Xcode 7.3
+- Xcode 8 (Use pod version 1.0.3 for Xcode 7)
 
 ## Installation
 
-> **Embedded frameworks require a minimum deployment target of iOS 8.**
+> **Embedded frameworks require a minimum deployment target of iOS 8.1**
 >
 > To use with a project targeting iOS 7, or if you don't want to use CocoaPods you must include the `AICustomViewControllerTransition.swift` source file directly in your project. 
 >
@@ -55,9 +55,9 @@ let myInteractiveTransitioningDelegate = InteractiveTransitioningDelegate()
 Animate transition for presenting your modal view controller. See SimpleTransitionViewController example in the Example project. 
 
 ```swift
-mySimpleTransitioningDelegate.transitionPresent = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) in
+mySimpleTransitioningDelegate.transitionPresent = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: @escaping () -> Void) in
 
-	UIView.animateWithDuration(animationDuration, animations: {
+	UIView.animate(withDuration: animationDuration, animations: {
 		// Your custom presentation animation here
 		// Use provided viewController views to animate
 	}, completion: { (finished) in
@@ -72,9 +72,9 @@ mySimpleTransitioningDelegate.transitionPresent = { [weak self] (fromViewControl
 Animate transition for dismissing your modal view controller. See SimpleTransitionViewController example in the Example project. 
 
 ```swift
-mySimpleTransitioningDelegate.transitionDismiss = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) in
+mySimpleTransitioningDelegate.transitionDismiss = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: @escaping () -> Void) in
 
-	UIView.animateWithDuration(animationDuration, animations: {
+	UIView.animate(withDuration: animationDuration, animations: {
 		// Your custom dismissal animation here
 		// Use provided viewController views to animate
 	}, completion: { (finished) in
@@ -109,20 +109,20 @@ myInteractiveTransitioningDelegate.transitionPercentDismiss = {[weak self] (from
 
 Use below methods if you are using an InteractiveTransitioningDelegate as your transitioning delegate. See PanToViewTransitionViewController and ExpandingCellsTableViewController examples in the Example project. 
 
-- beginPresentingViewController(_:fromViewController:) or beginDismissingViewController(_:)
+- beginPresenting(viewController:fromViewController:) or beginDismissing(viewController:)
 
 Begin presenting your modal view controller, usually in the callback method for a gesture recognizer that your user interacts with.
 
 ```swift
-myInteractiveTransitioningDelegate.beginPresentingViewController(myModalViewController, fromViewController: self)
+myInteractiveTransitioningDelegate.beginPresenting(viewController:myModalViewController, fromViewController:self)
 ```
 
-- updateInteractiveTransition(_:)
+- update(_:)
 
 Update the percentage of your transition, usually in the callback method for a gesture recognizer that your user interacts with.
 
 ```swift
-myInteractiveTransitioningDelegate.updateInteractiveTransition(percentage)
+myInteractiveTransitioningDelegate.update(percentage)
 ```
 
 - finalizeInteractiveTransition(isTransitionCompleted:)

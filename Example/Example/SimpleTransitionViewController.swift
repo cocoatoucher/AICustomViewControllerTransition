@@ -15,12 +15,12 @@ class SimpleTransitionViewController: UIViewController {
 	var customTransitioningDelegate: SimpleTransitioningDelegate = SimpleTransitioningDelegate()
 	// Create a view controller to display
 	lazy var detailViewController: ModalViewController = {
-		let vc = self.storyboard?.instantiateViewControllerWithIdentifier("detailViewController") as! ModalViewController
+		let vc = self.storyboard?.instantiateViewController(withIdentifier: "detailViewController") as! ModalViewController
 		// Hide indicator when pan to dismiss is enabled
 		// See ExpandingCellsTableViewController and PanToViewTransitionViewController examples where this is enabled
 		vc.isPanIndicatorHidden = true
 		
-		vc.modalPresentationStyle = .Custom
+		vc.modalPresentationStyle = .custom
 		vc.transitioningDelegate = self.customTransitioningDelegate
 		return vc
 	}()
@@ -30,9 +30,9 @@ class SimpleTransitionViewController: UIViewController {
 		
 		// Here only transitionDismiss is provided, modal view controller is dismissed with faded style, while it is presented in cover vertical style
 		// Default value is used for transitionPresent defined in AICustomViewControllerTransition
-		customTransitioningDelegate.transitionDismiss = { (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) in
+		customTransitioningDelegate.transitionDismiss = { (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: @escaping () -> Void) in
 			
-			UIView.animateWithDuration(defaultTransitionAnimationDuration, animations: {
+			UIView.animate(withDuration: defaultTransitionAnimationDuration, animations: {
 				
 				fromViewController.view.alpha = 0.0
 				
@@ -49,8 +49,8 @@ class SimpleTransitionViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 	
-	@IBAction func presentAction(sender: AnyObject) {
-		self.presentViewController(self.detailViewController, animated: true, completion: nil)
+	@IBAction func presentAction(_ sender: AnyObject) {
+		self.present(self.detailViewController, animated: true, completion: nil)
 	}
 
 }

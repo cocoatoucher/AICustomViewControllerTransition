@@ -16,22 +16,22 @@ class PanToViewTransitionViewController: UIViewController {
 	// Create a percent driven interactive transitioning delegate
 	var customTransitioningDelegate: InteractiveTransitioningDelegate = InteractiveTransitioningDelegate()
 	lazy var detailViewController: ModalViewController = {
-		let vc = self.storyboard?.instantiateViewControllerWithIdentifier("detailViewController") as! ModalViewController
+		let vc = self.storyboard?.instantiateViewController(withIdentifier: "detailViewController") as! ModalViewController
 		// In this example, view controller can only be dismissed automatically
 		vc.isPanIndicatorHidden = true
-		vc.modalPresentationStyle = .Custom
+		vc.modalPresentationStyle = .custom
 		vc.transitioningDelegate = self.customTransitioningDelegate
 		return vc
 	}()
 	// Keep track of pan ratio for transition animation
 	var lastPanRatio: CGFloat = 0.0
-	var panViewOriginalCenter = CGPointZero
+	var panViewOriginalCenter = CGPoint.zero
 	let panRatioThreshold: CGFloat = 0.3
 	
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-		customTransitioningDelegate.transitionPresent = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) in
+		customTransitioningDelegate.transitionPresent = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: @escaping () -> Void) in
 			
 			guard let weakSelf = self else {
 				return
@@ -39,18 +39,18 @@ class PanToViewTransitionViewController: UIViewController {
 			
 			var panViewEndFrame = weakSelf.panView.frame
 			// If transition is interactive only the final values below will be used
-			if case .Simple = transitionType {
-				panViewEndFrame.origin.y = -CGRectGetHeight(panViewEndFrame)
+			if case .simple = transitionType {
+				panViewEndFrame.origin.y = -panViewEndFrame.height
 				
 				// Move modalViewController to the end of pan view
-				toViewController.view.frame = CGRectMake(0, CGRectGetMaxY(containerView.bounds), CGRectGetWidth(containerView.bounds), CGRectGetHeight(containerView.bounds))
+				toViewController.view.frame = CGRect(x: 0, y: containerView.bounds.maxY, width: containerView.bounds.width, height: containerView.bounds.height)
 			}
 			
-			UIView.animateWithDuration(defaultTransitionAnimationDuration, animations: {
+			UIView.animate(withDuration: defaultTransitionAnimationDuration, animations: {
 				// Move view controller to cover the screen
 				toViewController.view.frame = containerView.bounds
 				// If transition is interactive, it will be moved by pan gesture recognizer
-				if case .Simple = transitionType {
+				if case .simple = transitionType {
 					weakSelf.panView.frame = panViewEndFrame
 				}
 				
@@ -59,17 +59,17 @@ class PanToViewTransitionViewController: UIViewController {
 			})
 		}
 		
-		customTransitioningDelegate.transitionDismiss = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) in
+		customTransitioningDelegate.transitionDismiss = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: @escaping () -> Void) in
 			
 			guard let weakSelf = self else {
 				return
 			}
 			
-			let endFrame = CGRectOffset(containerView.bounds, 0, CGRectGetHeight(containerView.bounds))
+			let endFrame = containerView.bounds.offsetBy(dx: 0, dy: containerView.bounds.height)
 			var panViewEndFrame = weakSelf.panView.frame
-			panViewEndFrame.origin.y = CGRectGetHeight(weakSelf.view.bounds) - CGRectGetHeight(panViewEndFrame)
+			panViewEndFrame.origin.y = weakSelf.view.bounds.height - panViewEndFrame.height
 			
-			UIView.animateWithDuration(defaultTransitionAnimationDuration, animations: {
+			UIView.animate(withDuration: defaultTransitionAnimationDuration, animations: {
 				// Move modalViewController to out of the screen
 				fromViewController.view.frame = endFrame
 				// Move pan view to the bottom of the screen
@@ -86,9 +86,9 @@ class PanToViewTransitionViewController: UIViewController {
 				return
 			}
 			
-			let verticalMoveAmount = CGRectGetHeight(weakSelf.view.bounds) - (CGRectGetHeight(weakSelf.view.bounds) * percentage)
+			let verticalMoveAmount = weakSelf.view.bounds.height - (weakSelf.view.bounds.height * percentage)
 			
-			toViewController.view.frame = CGRectMake(0, verticalMoveAmount, CGRectGetWidth(containerView.bounds), CGRectGetHeight(containerView.bounds))
+			toViewController.view.frame = CGRect(x: 0, y: verticalMoveAmount, width: containerView.bounds.width, height: containerView.bounds.height)
 			
 			toViewController.view.backgroundColor = UIColor(red: percentage, green: 1, blue: percentage, alpha: 1)
 		}
@@ -99,30 +99,30 @@ class PanToViewTransitionViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 	
-	override func viewWillAppear(animated: Bool) {
+	override func viewWillAppear(_ animated: Bool) {
 		super.viewWillAppear(animated)
 		
 		self.navigationController!.setNavigationBarHidden(true, animated: true)
 	}
 	
-	@IBAction func handlePan(panGestureRecognizer: UIPanGestureRecognizer) {
+	@IBAction func handlePan(_ panGestureRecognizer: UIPanGestureRecognizer) {
 		
-		if (panGestureRecognizer.state == .Began) {
+		if (panGestureRecognizer.state == .began) {
 			// Keep track of pan view's center
 			self.panViewOriginalCenter = self.panView.center
 			
 			// Begin presenting in an interactive way
 			self.customTransitioningDelegate.beginPresenting(viewController: self.detailViewController, fromViewController: self)
-		} else if (panGestureRecognizer.state == .Changed) {
-			let translatedPoint = panGestureRecognizer.translationInView(self.view)
+		} else if (panGestureRecognizer.state == .changed) {
+			let translatedPoint = panGestureRecognizer.translation(in: self.view)
 			// Move pan view, alternatively this can be moved within transitioning delegate's animation closure
-			self.panView.center = CGPointMake(self.panViewOriginalCenter.x, self.panViewOriginalCenter.y + translatedPoint.y)
+			self.panView.center = CGPoint(x: self.panViewOriginalCenter.x, y: self.panViewOriginalCenter.y + translatedPoint.y)
 			
 			// Keep track of last pan ratio
-			self.lastPanRatio = maximumInteractiveTransitionPercentage - ((self.panView.frame.origin.y + self.panView.frame.size.height) / CGRectGetHeight(self.view.bounds))
+			self.lastPanRatio = maximumInteractiveTransitionPercentage - ((self.panView.frame.origin.y + self.panView.frame.size.height) / (self.view.bounds).height)
 			// Update interactive transition percentage
-			self.customTransitioningDelegate.updateInteractiveTransition(self.lastPanRatio)
-		} else if (panGestureRecognizer.state == .Ended || panGestureRecognizer.state == .Failed || panGestureRecognizer.state == .Cancelled) {
+			self.customTransitioningDelegate.update(self.lastPanRatio)
+		} else if (panGestureRecognizer.state == .ended || panGestureRecognizer.state == .failed || panGestureRecognizer.state == .cancelled) {
 			
 			let completed = (self.lastPanRatio > panRatioThreshold)
 			// Finalize the interactive transition
@@ -131,24 +131,24 @@ class PanToViewTransitionViewController: UIViewController {
 			// Move the pan view either to out and top of the screen or bottom of the screen
 			// Alternatively, this can be done in transitionPresent and transitionDismiss animation closures
 			var panViewFrame = self.panView.frame
-			UIView.animateWithDuration(defaultTransitionAnimationDuration, animations: {
+			UIView.animate(withDuration: defaultTransitionAnimationDuration, animations: {
 				if !completed {
-					panViewFrame.origin.y = CGRectGetHeight(self.view.bounds) - CGRectGetHeight(panViewFrame)
+					panViewFrame.origin.y = self.view.bounds.height - panViewFrame.height
 				} else {
-					panViewFrame.origin.y =  -CGRectGetHeight(panViewFrame)
+					panViewFrame.origin.y =  -panViewFrame.height
 				}
 				self.panView.frame = panViewFrame
 			})
 		}
 	}
 	
-	@IBAction func simplePresentAction(sender: AnyObject) {
+	@IBAction func simplePresentAction(_ sender: AnyObject) {
 		// When user only taps the button, modalViewController is presented as usual
-		self.presentViewController(self.detailViewController, animated: true, completion: nil)
+		self.present(self.detailViewController, animated: true, completion: nil)
 	}
 	
-	@IBAction func backAction(sender: AnyObject) {
-		self.navigationController?.popViewControllerAnimated(true)
+	@IBAction func backAction(_ sender: AnyObject) {
+		_ = self.navigationController?.popViewController(animated: true)
 		self.navigationController!.setNavigationBarHidden(false, animated: true)
 	}
 

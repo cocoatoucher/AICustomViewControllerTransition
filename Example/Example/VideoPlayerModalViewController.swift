@@ -13,8 +13,8 @@ class VideoView: UIView {
 	
 	var videoPlayerLayer: AVPlayerLayer?
 	
-	override func layoutSublayersOfLayer(layer: CALayer) {
-		super.layoutSublayersOfLayer(layer)
+	override func layoutSublayers(of layer: CALayer) {
+		super.layoutSublayers(of: layer)
 		
 		if (self.videoPlayerLayer != nil) {
 			self.videoPlayerLayer?.frame = self.bounds
@@ -30,9 +30,9 @@ class VideoPlayerModalViewController: UIViewController {
 	@IBOutlet weak var backgroundView: UIView!
 	@IBOutlet weak var dismissButton: UIButton!
 	
-	var handlePan: ((panGestureRecognizer: UIPanGestureRecognizer) -> Void)?
+	var handlePan: ((_ panGestureRecognizer: UIPanGestureRecognizer) -> Void)?
 	
-	let videoPlayer = AVPlayer(URL: NSURL.fileURLWithPath(NSBundle.mainBundle().pathForResource("video", ofType: "mp4")!))
+	let videoPlayer = AVPlayer(url: URL(fileURLWithPath: Bundle.main.path(forResource: "video", ofType: "mp4")!))
 	
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,12 +44,12 @@ class VideoPlayerModalViewController: UIViewController {
 		self.videoPlayer.play()
 		
 		// Repeat the video forever
-		self.videoPlayer.actionAtItemEnd = .None
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(VideoPlayerModalViewController.playerItemDidReachEnd(_:)), name: AVPlayerItemDidPlayToEndTimeNotification, object: self.videoPlayer.currentItem)
+		self.videoPlayer.actionAtItemEnd = .none
+		NotificationCenter.default.addObserver(self, selector: #selector(VideoPlayerModalViewController.playerItemDidReachEnd(_:)), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: self.videoPlayer.currentItem)
     }
 	
-	func playerItemDidReachEnd(notification: NSNotification) {
-		self.videoPlayer.seekToTime(kCMTimeZero)
+	func playerItemDidReachEnd(_ notification: Notification) {
+		self.videoPlayer.seek(to: kCMTimeZero)
 	}
 
     override func didReceiveMemoryWarning() {
@@ -57,11 +57,11 @@ class VideoPlayerModalViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-	@IBAction func handlePan(sender: UIPanGestureRecognizer) {
-		self.handlePan?(panGestureRecognizer: sender)
+	@IBAction func handlePan(_ sender: UIPanGestureRecognizer) {
+		self.handlePan?(sender)
 	}
 	
-	@IBAction func dismissAction(sender: AnyObject) {
-		self.dismissViewControllerAnimated(true, completion: nil)
+	@IBAction func dismissAction(_ sender: AnyObject) {
+		self.dismiss(animated: true, completion: nil)
 	}
 }

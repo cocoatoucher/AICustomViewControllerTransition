@@ -17,7 +17,7 @@ class ExpandingCellsTableViewController: UIViewController, UITableViewDelegate, 
 	var customTransitioningDelegate: InteractiveTransitioningDelegate = InteractiveTransitioningDelegate()
 	
 	// Store selected cell's index path during transition
-	var selectedCellIndexPath: NSIndexPath?
+	var selectedCellIndexPath: IndexPath?
 	
 	// Using a transitionView to replicate cell's inner view during transition
 	// In order to do that for your own custom cells, implement cell content as a seperate class or optionally a separate .xib file, then place the same view above your table view
@@ -32,27 +32,27 @@ class ExpandingCellsTableViewController: UIViewController, UITableViewDelegate, 
 	var lastDetailViewOriginY: CGFloat = 0.0
 	
 	lazy var detailViewController: ModalViewController = {
-		let vc = self.storyboard?.instantiateViewControllerWithIdentifier("detailViewController") as! ModalViewController
-		vc.modalPresentationStyle = .Custom
+		let vc = self.storyboard?.instantiateViewController(withIdentifier: "detailViewController") as! ModalViewController
+		vc.modalPresentationStyle = .custom
 		vc.transitioningDelegate = self.customTransitioningDelegate
 		// Pan gesture recognizer feedback from detailViewController's view is captured via this callback closure
 		vc.handlePan = {(panGestureRecozgnizer) in
 			
-			let translatedPoint = panGestureRecozgnizer.translationInView(self.view)
+			let translatedPoint = panGestureRecozgnizer.translation(in: self.view)
 			
-			if (panGestureRecozgnizer.state == .Began) {
+			if (panGestureRecozgnizer.state == .began) {
 				// Begin dismissing view controller
 				self.customTransitioningDelegate.beginDismissing(viewController: vc)
 				self.lastDetailViewOriginY = vc.view.frame.origin.y
 				
-			} else if (panGestureRecozgnizer.state == .Changed) {
-				let ratio = (self.lastDetailViewOriginY + translatedPoint.y) / CGRectGetHeight(vc.view.bounds)
+			} else if (panGestureRecozgnizer.state == .changed) {
+				let ratio = (self.lastDetailViewOriginY + translatedPoint.y) / vc.view.bounds.height
 				// Store lastPanRatio for next callback
 				self.lastPanRatio = ratio
 				
 				// Update percentage of interactive transition
-				self.customTransitioningDelegate.updateInteractiveTransition(self.lastPanRatio)
-			} else if (panGestureRecozgnizer.state == .Ended) {
+				self.customTransitioningDelegate.update(self.lastPanRatio)
+			} else if (panGestureRecozgnizer.state == .ended) {
 				// If pan ratio exceeds the threshold then transition is completed, otherwise cancel dismissal and present the view controller again
 				let completed = (self.lastPanRatio > self.panRatioThreshold) || (self.lastPanRatio < -self.panRatioThreshold)
 				self.customTransitioningDelegate.finalizeInteractiveTransition(isTransitionCompleted: completed)
@@ -65,7 +65,7 @@ class ExpandingCellsTableViewController: UIViewController, UITableViewDelegate, 
 		super.viewDidLoad()
 		
 		// Animate presentation transition
-		customTransitioningDelegate.transitionPresent = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) in
+		customTransitioningDelegate.transitionPresent = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: @escaping () -> Void) in
 			
 			guard let weakSelf = self else {
 				return
@@ -75,43 +75,41 @@ class ExpandingCellsTableViewController: UIViewController, UITableViewDelegate, 
 				return
 			}
 			
-			guard let cell = weakSelf.tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell else {
+			guard let cell = weakSelf.tableView.cellForRow(at: indexPath) as? TableViewCell else {
 				return
 			}
 			
-			let originalFrame = containerView.convertRect(cell.innerView.frame, fromView: cell.innerView.superview)
+			let originalFrame = containerView.convert(cell.innerView.frame, from: cell.innerView.superview)
 			
 			// If interactive transition is cancelled, there is no need to setup the transitionView and reset modalViewController's frame, since the final values will be used to present back to the previous state
-			if let isInteractiveTransitionCancelled = transitionType.isInteractiveTransitionCancelled {
-				if (isInteractiveTransitionCancelled) {
-					// Move transitionView in the same place with the cell
-					weakSelf.transitionViewTopSpace.constant = CGRectGetMinY(originalFrame)
-					weakSelf.view.layoutIfNeeded()
-					
-					// Start replicating the cell's inner view and hide the cell's inner view
-					weakSelf.transitionView.hidden = false
-					cell.innerView.hidden = true
-					weakSelf.transitionImageView.image = cell.thumbnail.image
-					
-					// Replicate cell in modalViewController's header image
-					(toViewController as! ModalViewController).headerImageView.image = cell.thumbnail.image
-					
-					// Set initial opacity to 0
-					toViewController.view.alpha = 0.0
-					
-					// Set initial frame to right above the cell, aligning top
-					toViewController.view.frame = CGRectMake(0, CGRectGetMinY(originalFrame), CGRectGetWidth(containerView.bounds), CGRectGetHeight(containerView.bounds))
-				}
+			if transitionType.isInteractiveTransitionCancelled == nil || transitionType.isInteractiveTransitionCancelled == false {
+				// Move transitionView in the same place with the cell
+				weakSelf.transitionViewTopSpace.constant = originalFrame.minY
+				weakSelf.view.layoutIfNeeded()
+				
+				// Start replicating the cell's inner view and hide the cell's inner view
+				weakSelf.transitionView.isHidden = false
+				cell.innerView.isHidden = true
+				weakSelf.transitionImageView.image = cell.thumbnail.image
+				
+				// Replicate cell in modalViewController's header image
+				(toViewController as! ModalViewController).headerImageView.image = cell.thumbnail.image
+				
+				// Set initial opacity to 0
+				toViewController.view.alpha = 0.0
+				
+				// Set initial frame to right above the cell, aligning top
+				toViewController.view.frame = CGRect(x: 0, y: originalFrame.minY, width: containerView.bounds.width, height: containerView.bounds.height)
 			}
 			
 			// Move transitionView to top of the screen
 			weakSelf.transitionViewTopSpace.constant = 0.0
 			weakSelf.view.setNeedsUpdateConstraints()
 			
-			let speedPerPixel = 0.5 / Double(CGRectGetHeight(containerView.bounds))
-			let animationDuration = max(speedPerPixel * Double(CGRectGetMinY(toViewController.view.frame)), defaultTransitionAnimationDuration)
+			let speedPerPixel = 0.5 / Double(containerView.bounds.height)
+			let animationDuration = max(speedPerPixel * Double(toViewController.view.frame.minY), defaultTransitionAnimationDuration)
 			
-			UIView.animateWithDuration(animationDuration, delay:0.0, options: .CurveEaseInOut, animations: {
+			UIView.animate(withDuration: animationDuration, delay:0.0, options: .curveEaseInOut, animations: {
 				// Animate the transitionView
 				weakSelf.view.layoutIfNeeded()
 				
@@ -125,7 +123,7 @@ class ExpandingCellsTableViewController: UIViewController, UITableViewDelegate, 
 			})
 		}
 		
-		customTransitioningDelegate.transitionDismiss = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) in
+		customTransitioningDelegate.transitionDismiss = { [weak self] (fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: @escaping () -> Void) in
 			
 			guard let weakSelf = self else {
 				return
@@ -135,35 +133,35 @@ class ExpandingCellsTableViewController: UIViewController, UITableViewDelegate, 
 				return
 			}
 			
-			guard let cell = weakSelf.tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell else {
+			guard let cell = weakSelf.tableView.cellForRow(at: indexPath) as? TableViewCell else {
 				return
 			}
 			
-			let originalFrame = containerView.convertRect(cell.frame, fromView:cell.superview)
+			let originalFrame = containerView.convert(cell.frame, from:cell.superview)
 			// Calculate the vertical amount to move cell's inner view and modalViewController's view
-			let verticalMoveAmount = CGRectGetMinY(originalFrame)
+			let verticalMoveAmount = originalFrame.minY
 			
 			// Move cell's inner view to right above the cell
 			weakSelf.transitionViewTopSpace.constant = verticalMoveAmount
 			weakSelf.view.setNeedsUpdateConstraints()
 			
-			let speedPerPixel = 0.5 / Double(CGRectGetHeight(containerView.bounds))
-			let animationDuration = max(speedPerPixel * Double(CGRectGetMinY(toViewController.view.frame)), defaultTransitionAnimationDuration)
+			let speedPerPixel = 0.5 / Double(containerView.bounds.height)
+			let animationDuration = max(speedPerPixel * Double(toViewController.view.frame.minY), defaultTransitionAnimationDuration)
 			
-			UIView.animateWithDuration(animationDuration, animations: {
+			UIView.animate(withDuration: animationDuration, animations: {
 				
 				weakSelf.view.layoutIfNeeded()
 				
 				// Move modalViewController to right above the cell
-				fromViewController.view.frame = CGRectMake(0, verticalMoveAmount + CGRectGetMinY(containerView.frame), CGRectGetWidth(containerView.bounds), CGRectGetHeight(containerView.bounds))
+				fromViewController.view.frame = CGRect(x: 0, y: verticalMoveAmount + containerView.frame.minY, width: containerView.bounds.width, height: containerView.bounds.height)
 				// Make modalViewController hidden
 				fromViewController.view.alpha = 0.0
 				
 				}, completion: { (finished) in
 					// Make cell's innerView visible again
 					// Hide transitionView
-					cell.innerView.hidden = false
-					weakSelf.transitionView.hidden = true
+					cell.innerView.isHidden = false
+					weakSelf.transitionView.isHidden = true
 					
 					completion()
 			})
@@ -179,20 +177,20 @@ class ExpandingCellsTableViewController: UIViewController, UITableViewDelegate, 
 				return
 			}
 			
-			guard let cell = weakSelf.tableView.cellForRowAtIndexPath(indexPath) as? TableViewCell else {
+			guard let cell = weakSelf.tableView.cellForRow(at: indexPath) as? TableViewCell else {
 				return
 			}
 			
-			let originalFrame = containerView.convertRect(cell.frame, fromView:cell.superview)
+			let originalFrame = containerView.convert(cell.frame, from:cell.superview)
 			// Calculate the vertical amount to move cell's inner view and modalViewController's view
-			let verticalMoveAmount = CGRectGetMinY(originalFrame) * percentage
+			let verticalMoveAmount = originalFrame.minY * percentage
 			
 			// Move transitionView by the vertical move amount
 			weakSelf.transitionViewTopSpace.constant = verticalMoveAmount
 			weakSelf.view.layoutIfNeeded()
 			
 			// Move modalViewController's view by the vertical move amount
-			fromViewController.view.frame = CGRectMake(0, verticalMoveAmount, CGRectGetWidth(containerView.bounds), CGRectGetHeight(containerView.bounds))
+			fromViewController.view.frame = CGRect(x: 0, y: verticalMoveAmount, width: containerView.bounds.width, height: containerView.bounds.height)
 			
 			// Alter modalViewController's opacity
 			fromViewController.view.alpha = maximumInteractiveTransitionPercentage - percentage
@@ -206,23 +204,23 @@ class ExpandingCellsTableViewController: UIViewController, UITableViewDelegate, 
 	
 	// MARK: - Table view data source
 	
-	func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+	func numberOfSections(in tableView: UITableView) -> Int {
 		return 1
 	}
 	
-	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return 7
 	}
 	
-	func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath) as! TableViewCell
+	func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath) as! TableViewCell
 		
-		cell.thumbnail.image = UIImage(named: "\(indexPath.row)")
+		cell.thumbnail.image = UIImage(named: "\((indexPath as NSIndexPath).row)")
 		
 		return cell
 	}
 	
-	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		
 		// Store selected cell's index path during transition
 		self.selectedCellIndexPath = indexPath
@@ -232,8 +230,8 @@ class ExpandingCellsTableViewController: UIViewController, UITableViewDelegate, 
 		// There seems to be a bug in SDK, see here: http://openradar.appspot.com/19563577
 		// Calling presentViewController() within didSelectRowAtIndexPath() gets even slower with UIViewControllerAnimatedTransitioning
 		// Temporary solution is dispatch_async() with main queue
-		dispatch_async(dispatch_get_main_queue()) {
-			self.presentViewController(self.detailViewController, animated: true, completion: nil)
+		DispatchQueue.main.async {
+			self.present(self.detailViewController, animated: true, completion: nil)
 		}
 	}
 	

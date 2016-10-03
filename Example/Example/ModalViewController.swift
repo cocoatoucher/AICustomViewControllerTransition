@@ -13,11 +13,11 @@ class ModalViewController: UIViewController {
 	@IBOutlet weak var headerView: UIView!
 	@IBOutlet weak var headerImageView: UIImageView!
 	@IBOutlet weak var panIndicatorView: UIView!
-	var handlePan: ((panGestureRecognizer: UIPanGestureRecognizer) -> Void)?
+	var handlePan: ((_ panGestureRecognizer: UIPanGestureRecognizer) -> Void)?
 	var isPanIndicatorHidden: Bool = false {
 		didSet {
 			if (self.panIndicatorView) != nil {
-				self.panIndicatorView.hidden = isPanIndicatorHidden;
+				self.panIndicatorView.isHidden = isPanIndicatorHidden;
 			}
 		}
 	}
@@ -25,7 +25,7 @@ class ModalViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		
-		self.panIndicatorView.hidden = self.isPanIndicatorHidden;
+		self.panIndicatorView.isHidden = self.isPanIndicatorHidden;
     }
 
     override func didReceiveMemoryWarning() {
@@ -33,12 +33,12 @@ class ModalViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 	
-	@IBAction func dismissAction(sender: AnyObject) {
-		self.dismissViewControllerAnimated(true, completion: nil)
+	@IBAction func dismissAction(_ sender: AnyObject) {
+		self.dismiss(animated: true, completion: nil)
 	}
 	
-	@IBAction func handlePan(sender: UIPanGestureRecognizer) {
-		self.handlePan?(panGestureRecognizer: sender)
+	@IBAction func handlePan(_ sender: UIPanGestureRecognizer) {
+		self.handlePan?(sender)
 	}
 
 }

@@ -16,13 +16,13 @@ public enum TransitionType {
 	/** 
 		Non-interactive transition
 	*/
-	case Simple
+	case simple
 	/**
 		Interactive transition
 		- parameter isCancelled: true if transition is cancelled, false if transition is finished
 		- parameter lastPercentage: last percentage value of the transition when it is cancelled or finished
 	*/
-	case Interactive(isCancelled: Bool, lastPercentage: CGFloat)
+	case interactive(isCancelled: Bool, lastPercentage: CGFloat)
 	
 	/**
 		Handy var for interactive transtion cancelled status
@@ -30,7 +30,7 @@ public enum TransitionType {
 		nil if the transition is simple
 	*/
 	public var isInteractiveTransitionCancelled: Bool? {
-		if case let .Interactive(isCancelled, _) = self {
+		if case let .interactive(isCancelled, _) = self {
 			return isCancelled
 		}
 		return nil
@@ -42,7 +42,7 @@ public enum TransitionType {
 		non-nil if the transition is interactive
 	*/
 	public var lastPercentage: CGFloat? {
-		if case let .Interactive(_, lastPercentage) = self {
+		if case let .interactive(_, lastPercentage) = self {
 			return lastPercentage
 		}
 		return nil
@@ -59,7 +59,7 @@ public enum TransitionType {
 	- parameter transitionType: Whether the transition is Simple or Interactive, and additional information if interactive
 	- parameter completion: This closure should be called at the end of your transition animation to finalize the transition
 */
-public typealias TransitionViewController = ((fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) -> Void)
+public typealias TransitionViewController = ((_ fromViewController: UIViewController, _ toViewController: UIViewController, _ containerView: UIView, _ transitionType: TransitionType, _ completion: @escaping () -> Void) -> Void)
 
 /**
 	Interactive transition percentage handling closure
@@ -69,12 +69,12 @@ public typealias TransitionViewController = ((fromViewController: UIViewControll
 	- parameter percentage: Percentage of the transition phase. This will reflect the percentage value provided via updateInteractiveTransition(_:) of InteractiveTransitioningDelegate class
 	- parameter containerView: Transition view which will contain both fromViewController and toViewController's views. Place any temporary animated views on this view
 */
-public typealias PercentTransitionViewController = ((fromViewController: UIViewController, toViewController: UIViewController, percentage: CGFloat, containerView: UIView) -> Void)
+public typealias PercentTransitionViewController = ((_ fromViewController: UIViewController, _ toViewController: UIViewController, _ percentage: CGFloat, _ containerView: UIView) -> Void)
 
 /**
 	Animation duration used within default transition animation closure values
 */
-public let defaultTransitionAnimationDuration: NSTimeInterval = 0.3
+public let defaultTransitionAnimationDuration: TimeInterval = 0.3
 /**
 	Maximum percentage value used for percent driven interactive transition
 */
@@ -91,15 +91,15 @@ private enum TransitionDirection {
 	/**
 		No transition
 	*/
-	case None
+	case none
 	/**
 		Transitioning delegate is presenting a view controller
 	*/
-	case Presenting
+	case presenting
 	/**
 		Transitioning delegate is dismissing a view controller
 	*/
-	case Dismissing
+	case dismissing
 }
 
 //MARK: - TransitionState
@@ -110,33 +110,33 @@ private enum TransitionState {
 	/**
 		No transition state
 	*/
-	case None
+	case none
 	/**
 		Interactive transition has started either presenting or dismissing which can either be interactive or simple
 		- parameter transitionType: Whether the transition is Simple or Interactive, and additional information if interactive
 	*/
-	case Start(transitionType: TransitionType)
+	case start(transitionType: TransitionType)
 	/**
 		State of an interactive transition, either presentation or dismissal, is changing percentage
 		- parameter currentPercentage: Current percentage of interactive transition phase
 	*/
-	case InteractivePercentage(currentPercentage: CGFloat)
+	case interactivePercentage(currentPercentage: CGFloat)
 	/**
 		Interactive transition has completed either presenting or dismissing which can either be interactive or simple
 		- parameter transitionType: Whether the transition is Simple or Interactive, and additional information if interactive
 	*/
-	case Finish(transitionType: TransitionType)
+	case finish(transitionType: TransitionType)
 	/**
 		Interactive transition has cancelled either presenting or dismissing a view controller in an interactive way
 		- parameter lastPercentage: Last percentage value of transition phase when the interactive transition is cancelled
 	*/
-	case CancelInteractive(lastPercentage: CGFloat)
+	case cancelInteractive(lastPercentage: CGFloat)
 	
 	/**
 		Handy var to get whether the transition state is none
 	*/
 	var isNone: Bool {
-		if case .None = self {
+		if case .none = self {
 			return true
 		}
 		return false
@@ -147,19 +147,19 @@ private enum TransitionState {
 	*/
 	var isInteractive: Bool {
 		switch self {
-		case .Start(let transitionType):
-			if case .Interactive = transitionType {
+		case .start(let transitionType):
+			if case .interactive = transitionType {
 				return true
 			}
 			return false
-		case .InteractivePercentage:
+		case .interactivePercentage:
 			return true
-		case .Finish(let transitionType):
-			if case .Interactive = transitionType {
+		case .finish(let transitionType):
+			if case .interactive = transitionType {
 				return true
 			}
 			return false
-		case .CancelInteractive(_):
+		case .cancelInteractive(_):
 			return true
 		default:
 			return false
@@ -172,23 +172,23 @@ private enum TransitionState {
 	*/
 	var percentage: CGFloat? {
 		switch self {
-		case .Start(let transitionType):
+		case .start(let transitionType):
 			switch transitionType {
-			case .Interactive(_, let lastPercentage):
+			case .interactive(_, let lastPercentage):
 				return lastPercentage
 			default:
 				return nil
 			}
-		case .InteractivePercentage(let currentPercentage):
+		case .interactivePercentage(let currentPercentage):
 			return currentPercentage
-		case .Finish(let transitionType):
+		case .finish(let transitionType):
 			switch transitionType {
-			case .Interactive(_, let lastPercentage):
+			case .interactive(_, let lastPercentage):
 				return lastPercentage
 			default:
 				return nil
 			}
-		case .CancelInteractive(let lastPercentage):
+		case .cancelInteractive(let lastPercentage):
 			return lastPercentage
 		default:
 			return nil
@@ -202,12 +202,12 @@ private enum TransitionState {
 	*/
 	var isPercentDriven: Bool {
 		switch self {
-		case .Start(let transitionType):
-			if case .Interactive = transitionType {
+		case .start(let transitionType):
+			if case .interactive = transitionType {
 				return true
 			}
 			return false
-		case .InteractivePercentage:
+		case .interactivePercentage:
 			return true
 		default:
 			return false
@@ -218,7 +218,7 @@ private enum TransitionState {
 		Handy var to get whether the transition has started
 	*/
 	var didTransitionStart: Bool {
-		if case .Start = self {
+		if case .start = self {
 			return true
 		}
 		return false
@@ -229,7 +229,7 @@ private enum TransitionState {
 	*/
 	var didTransitionEnd: Bool {
 		switch self {
-		case .Finish, .CancelInteractive:
+		case .finish, .cancelInteractive:
 			return true
 		default:
 			return false
@@ -240,7 +240,7 @@ private enum TransitionState {
 		Handy var to get whether the transition has cancelled
 	*/
 	var isInteractiveTransitionCancelled: Bool {
-		if case .CancelInteractive = self {
+		if case .cancelInteractive = self {
 			return true
 		}
 		return false
@@ -257,43 +257,43 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 		Default closure for handling prensentation transition animation with similar transition to iOS cover vertical transition style.
 		This will be overriden by the user of the owner class, SimpleTransitioningDelegate or InteractiveTransitioningDelegate for custom animation.
 	*/
-	var transitionPresent: TransitionViewController = {(fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) in
+	var transitionPresent: TransitionViewController = {(fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: @escaping () -> Void) in
 		
-		if case .Interactive = transitionType {
+		if case .simple = transitionType {
 			// Set initial frame only if the transition is not interactive
-			let beginFrame = CGRectOffset(containerView.bounds, 0, CGRectGetHeight(containerView.bounds))
+			let beginFrame = containerView.bounds.offsetBy(dx: 0, dy: containerView.bounds.height)
 			toViewController.view.frame = beginFrame
 		}
 		
 		let endFrame: CGRect = containerView.bounds
 		
-		UIView.animateWithDuration(defaultTransitionAnimationDuration, animations: {
+		UIView.animate(withDuration: defaultTransitionAnimationDuration, delay: 0.0, options: .curveEaseInOut, animations: {
 			toViewController.view.frame = endFrame
 			}, completion: { (finished) in
 				completion()
 		})
-	}
+	} as! TransitionViewController
 	/**
 		Default closure for handling dismiss transition animation with similar transition to iOS cover vertical transition style.
 		This will be overriden by the user of the owner class, SimpleTransitioningDelegate or InteractiveTransitioningDelegate for custom animation.
 	*/
-	var transitionDismiss: TransitionViewController = {(fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: () -> Void) in
+	var transitionDismiss: TransitionViewController = {(fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: @escaping () -> Void) in
 		
-		let endFrame = CGRectOffset(containerView.bounds, 0, CGRectGetHeight(containerView.bounds))
+		let endFrame = containerView.bounds.offsetBy(dx: 0, dy: containerView.bounds.height)
 		
-		UIView.animateWithDuration(defaultTransitionAnimationDuration, animations: {
+		UIView.animate(withDuration: defaultTransitionAnimationDuration, delay: 0.0, options: .curveEaseInOut, animations: {
 			fromViewController.view.frame = endFrame
 			}, completion: { (finished) in
 				completion()
 		})
-	}
+	} as! TransitionViewController
 	/**
 		Default closure for handling presentation transition percentage change.
 		This will be overriden by the user of the owner class, InteractiveTransitioningDelegate for custom animation.
 	*/
 	var transitionPercentPresent: PercentTransitionViewController? = {(fromViewController: UIViewController, toViewController: UIViewController, percentage: CGFloat, containerView: UIView) in
 		
-		let endFrame = CGRectOffset(containerView.bounds, 0, CGRectGetHeight(containerView.bounds) * (maximumInteractiveTransitionPercentage - percentage))
+		let endFrame = containerView.bounds.offsetBy(dx: 0, dy: containerView.bounds.height * (maximumInteractiveTransitionPercentage - percentage))
 		toViewController.view.frame = endFrame
 	}
 	/**
@@ -302,14 +302,14 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 	*/
 	var transitionPercentDismiss: PercentTransitionViewController? = {(fromViewController: UIViewController, toViewController: UIViewController, percentage: CGFloat, containerView: UIView) in
 		
-		let endFrame = CGRectOffset(containerView.bounds, 0, CGRectGetHeight(containerView.bounds) * percentage)
+		let endFrame = containerView.bounds.offsetBy(dx: 0, dy: containerView.bounds.height * percentage)
 		fromViewController.view.frame = endFrame
 	}
 	
 	/**
 		Current direction of the transition, default is no transition
 	*/
-	var transitionDirection: TransitionDirection = .None
+	var transitionDirection: TransitionDirection = .none
 	/**
 		Transition context provided by either simple or interactive transitioning delegate
 	*/
@@ -318,7 +318,7 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 	/**
 		Handles placing transitioning view controllers' views in transitionContext's containerView and performing the actual animation using transitionPresent, transitionDismiss, transitionPercentPresent and transitionPercentDismiss depending on the transitionState using the current transitionDirection.
 	*/
-	var transitionState: TransitionState = .None {
+	var transitionState: TransitionState = .none {
 		didSet {
 			
 			guard !self.transitionState.isNone else {
@@ -330,7 +330,7 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 				return
 			}
 			
-			let containerView = transitionContext.containerView()!
+			let containerView = transitionContext.containerView
 			
 			// Making transitionState conditions more readable with these booleans
 			let didTransitionStart = self.transitionState.didTransitionStart
@@ -340,28 +340,28 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 			let isInteractive = self.transitionState.isInteractive
 			let percentage = self.transitionState.percentage
 			
-			let fromViewController = transitionContext.viewControllerForKey(UITransitionContextFromViewControllerKey)!
-			let toViewController = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey)!
+			let fromViewController = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from)!
+			let toViewController = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)!
 			
 			// Place transitioning view controllers' views in containerView
 			switch self.transitionDirection {
-			case .Presenting:
+			case .presenting:
 				if didTransitionStart {
 					containerView.addSubview(fromViewController.view)
 					containerView.addSubview(toViewController.view)
 				} else if didTransitionEnd && !isInteractive {
 					containerView.addSubview(toViewController.view)
 				}
-			case .Dismissing:
+			case .dismissing:
 				if didTransitionStart {
 					
 					// Setting presenting view controller's frame as containerView bounds. This helps with fixing misalignment if the containerView bounds changed after the initial transition, e.g. with in-call status bar.
 					toViewController.view.frame = containerView.bounds
 					
 					if !isInteractive {
-						containerView.insertSubview(toViewController.view, atIndex: 0)
+						containerView.insertSubview(toViewController.view, at: 0)
 					} else {
-						containerView.insertSubview(toViewController.view, atIndex: 0)
+						containerView.insertSubview(toViewController.view, at: 0)
 						containerView.addSubview(fromViewController.view)
 					}
 				}
@@ -370,11 +370,11 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 			}
 			
 			// Presenting view controller's user interaction should be disabled during transition to prevent possible colliding interaction
-			fromViewController.view.userInteractionEnabled = false
+			fromViewController.view.isUserInteractionEnabled = false
 			
 			// This closure is to be called at the end of provided transitionPresent and transitionDismiss callback closures
 			let completion = {
-				if transitionContext.transitionWasCancelled() {
+				if transitionContext.transitionWasCancelled {
 					if isInteractive {
 						transitionContext.cancelInteractiveTransition()
 					}
@@ -382,7 +382,7 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 					transitionContext.completeTransition(false)
 					
 					fromViewController.view.frame = containerView.frame
-					UIApplication.sharedApplication().keyWindow?.addSubview(fromViewController.view)
+					UIApplication.shared.keyWindow?.addSubview(fromViewController.view)
 				} else {
 					if isInteractive {
 						transitionContext.finishInteractiveTransition()
@@ -391,28 +391,28 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 					transitionContext.completeTransition(true)
 					
 					toViewController.view.frame = containerView.frame
-					UIApplication.sharedApplication().keyWindow?.addSubview(toViewController.view)
+					UIApplication.shared.keyWindow?.addSubview(toViewController.view)
 				}
 				
-				fromViewController.view.userInteractionEnabled = true
+				fromViewController.view.isUserInteractionEnabled = true
 				
 				// Cleaning up
-				self.transitionDirection = .None
+				self.transitionDirection = .none
 				self.transitionContext = nil
-				self.transitionState = .None
+				self.transitionState = .none
 			}
 			
 			if (!isPercentDriven) {
-				var animatePresenting = self.transitionDirection == .Presenting
+				var animatePresenting = self.transitionDirection == .presenting
 				var reverseFromAndToViewControllers = false
 				
 				if (isInteractiveTransitionCancelled) {
 					reverseFromAndToViewControllers = true
 					
 					switch self.transitionDirection {
-					case .Presenting:
+					case .presenting:
 						animatePresenting = false
-					case .Dismissing:
+					case .dismissing:
 						animatePresenting = true
 					default:
 						break
@@ -422,25 +422,25 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 				let reversedFromViewController = (reverseFromAndToViewControllers) ? toViewController : fromViewController
 				let reversedToViewController = (reverseFromAndToViewControllers) ? fromViewController : toViewController
 				
-				let transitionType: TransitionType = (isInteractive) ? .Interactive(isCancelled: isInteractiveTransitionCancelled, lastPercentage: percentage!) : .Simple
+				let transitionType: TransitionType = (isInteractive) ? .interactive(isCancelled: isInteractiveTransitionCancelled, lastPercentage: percentage!) : .simple
 				
 				if animatePresenting {
-					self.transitionPresent(fromViewController: reversedFromViewController, toViewController: reversedToViewController, containerView: containerView, transitionType: transitionType, completion: completion)
+					self.transitionPresent(reversedFromViewController, reversedToViewController, containerView, transitionType, completion)
 				} else {
-					self.transitionDismiss(fromViewController: reversedFromViewController, toViewController: reversedToViewController, containerView: containerView, transitionType: transitionType, completion: completion)
+					self.transitionDismiss(reversedFromViewController, reversedToViewController, containerView, transitionType, completion)
 				}
 			} else {
 				switch self.transitionDirection {
-				case .Presenting:
-					self.transitionPercentPresent?(fromViewController: fromViewController, toViewController: toViewController, percentage: percentage!, containerView: containerView)
-				case .Dismissing:
-					self.transitionPercentDismiss?(fromViewController: fromViewController, toViewController: toViewController, percentage: percentage!, containerView: containerView)
+				case .presenting:
+					self.transitionPercentPresent?(fromViewController, toViewController, percentage!, containerView)
+				case .dismissing:
+					self.transitionPercentDismiss?(fromViewController, toViewController, percentage!, containerView)
 				default:
 					break
 				}
 				
 				// Because there is no completion for percent driven callbacks, user interaction is enabled after each callback execution
-				fromViewController.view.userInteractionEnabled = true
+				fromViewController.view.isUserInteractionEnabled = true
 			}
 		}
 	}
@@ -449,25 +449,25 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 	/**
 		This is ignored, since the actual transition duration is specified in transition callback closures provided by transitioningDelegate classes
 	*/
-	@objc private func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
+	@objc fileprivate func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
 		return 0.0
 	}
 	
 	/**
 		This is used by SimpleTransitioningDelegate as in the protocol implementation. On the other hand, setting transitionContext and calling setTransitionState is manually handled by InteractiveTransitioningDelegate.
 	*/
-	@objc private func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
+	@objc fileprivate func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
 		
-		guard !transitionContext.isInteractive() else {
+		guard !transitionContext.isInteractive else {
 			return
 		}
 		
 		self.transitionContext = transitionContext
 		switch self.transitionDirection {
-		case .Presenting:
-			self.transitionState = .Finish(transitionType: .Simple)
-		case .Dismissing:
-			self.transitionState = .Start(transitionType: .Simple)
+		case .presenting:
+			self.transitionState = .finish(transitionType: .simple)
+		case .dismissing:
+			self.transitionState = .start(transitionType: .simple)
 		default:
 			break
 		}
@@ -481,26 +481,26 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 	Use for simple view controller transitions that doesn't require user interaction driven transition by providing your animation blocks with its callback closure properties.
 	Implements UIViewControllerTransitioningDelegate
 */
-public class SimpleTransitioningDelegate : NSObject, UIViewControllerTransitioningDelegate {
+open class SimpleTransitioningDelegate : NSObject, UIViewControllerTransitioningDelegate {
 	
 	/**
 		Whether the modal view controller is being presented or not
 	*/
-	public var isPresenting: Bool {
-		return self.transitionHelper.transitionDirection == .Presenting
+	open var isPresenting: Bool {
+		return self.transitionHelper.transitionDirection == .presenting
 	}
 	
 	/**
 		Whether the modal view controller is being dismissed or not
 	*/
-	public var isDismissing: Bool {
-		return self.transitionHelper.transitionDirection == .Dismissing
+	open var isDismissing: Bool {
+		return self.transitionHelper.transitionDirection == .dismissing
 	}
 	
 	/**
 		Callback closure for handling prensentation transition animation. Default value is similar transition to iOS cover vertical transition style.
 	*/
-	public var transitionPresent: TransitionViewController {
+	open var transitionPresent: TransitionViewController {
 		get {
 			return self.transitionHelper.transitionPresent
 		}
@@ -511,7 +511,7 @@ public class SimpleTransitioningDelegate : NSObject, UIViewControllerTransitioni
 	/**
 		Callback closure for handling dismiss transition animation. Default value is similar transition to iOS cover vertical transition style.
 	*/
-	public var transitionDismiss: TransitionViewController {
+	open var transitionDismiss: TransitionViewController {
 		get {
 			return self.transitionHelper.transitionDismiss
 		}
@@ -523,21 +523,21 @@ public class SimpleTransitioningDelegate : NSObject, UIViewControllerTransitioni
 	/**
 		UIViewControllerAnimatedTransitioning helper
 	*/
-	private let transitionHelper: ViewControllerTransitionHelper = ViewControllerTransitionHelper()
+	fileprivate let transitionHelper: ViewControllerTransitionHelper = ViewControllerTransitionHelper()
 	
 	//MARK: UIViewControllerTransitioningDelegate
 	/**
 		This method shouldn't be called
 	*/
-	public func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-		self.transitionHelper.transitionDirection = .Presenting
+	open func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+		self.transitionHelper.transitionDirection = .presenting
 		return self.transitionHelper
 	}
 	/**
 		This method shouldn't be called
 	*/
-	public func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-		self.transitionHelper.transitionDirection = .Dismissing
+	open func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+		self.transitionHelper.transitionDirection = .dismissing
 		return self.transitionHelper
 	}
 }
@@ -549,26 +549,26 @@ public class SimpleTransitioningDelegate : NSObject, UIViewControllerTransitioni
 	Subclasses UIPercentDrivenInteractiveTransition
 	Implements UIViewControllerTransitioningDelegate
 */
-public class InteractiveTransitioningDelegate : UIPercentDrivenInteractiveTransition, UIViewControllerTransitioningDelegate {
+open class InteractiveTransitioningDelegate : UIPercentDrivenInteractiveTransition, UIViewControllerTransitioningDelegate {
 	
 	/**
 		Whether the modal view controller is being presented or not
 	*/
-	public var isPresenting: Bool {
-		return self.transitionHelper.transitionDirection == .Presenting
+	open var isPresenting: Bool {
+		return self.transitionHelper.transitionDirection == .presenting
 	}
 	
 	/**
 		Whether the modal view controller is being dismissed or not
 	*/
-	public var isDismissing: Bool {
-		return self.transitionHelper.transitionDirection == .Dismissing
+	open var isDismissing: Bool {
+		return self.transitionHelper.transitionDirection == .dismissing
 	}
 	
 	/**
 		Callback closure for handling prensentation transition animation. Default value is similar transition to iOS cover vertical transition style.
 	*/
-	public var transitionPresent: TransitionViewController {
+	open var transitionPresent: TransitionViewController {
 		get {
 			return self.transitionHelper.transitionPresent
 		}
@@ -580,7 +580,7 @@ public class InteractiveTransitioningDelegate : UIPercentDrivenInteractiveTransi
 	/**
 		Callback closure for handling dismiss transition animation. Default value is similar transition to iOS cover vertical transition style.
 	*/
-	public var transitionDismiss: TransitionViewController {
+	open var transitionDismiss: TransitionViewController {
 		get {
 			return self.transitionHelper.transitionDismiss
 		}
@@ -592,7 +592,7 @@ public class InteractiveTransitioningDelegate : UIPercentDrivenInteractiveTransi
 	/**
 		Callback function for handling interactive presentation transition
 	*/
-	public var transitionPercentPresent: PercentTransitionViewController? {
+	open var transitionPercentPresent: PercentTransitionViewController? {
 		get {
 			return self.transitionHelper.transitionPercentPresent
 		}
@@ -604,7 +604,7 @@ public class InteractiveTransitioningDelegate : UIPercentDrivenInteractiveTransi
 	/**
 		Callback function for handling interactive dismissal transition
 	*/
-	public var transitionPercentDismiss: PercentTransitionViewController? {
+	open var transitionPercentDismiss: PercentTransitionViewController? {
 		get {
 			return self.transitionHelper.transitionPercentDismiss
 		}
@@ -616,12 +616,12 @@ public class InteractiveTransitioningDelegate : UIPercentDrivenInteractiveTransi
 	/**
 		UIViewControllerAnimatedTransitioning helper
 	*/
-	private let transitionHelper: ViewControllerTransitionHelper = ViewControllerTransitionHelper()
+	fileprivate let transitionHelper: ViewControllerTransitionHelper = ViewControllerTransitionHelper()
 	
 	/**
 		Internal flag to keep track of interactive state before a transitionContext is created
 	*/
-	private var isInteractiveTransition: Bool = false
+	fileprivate var isInteractiveTransition: Bool = false
 	
 	/**
 		Starts presenting the modal view controller in a percent driven way.
@@ -630,10 +630,10 @@ public class InteractiveTransitioningDelegate : UIPercentDrivenInteractiveTransi
 		- parameter viewController: Modal view controller to present
 		- parameter fromViewController: Parent view controller
 	*/
-	public func beginPresenting(viewController viewController: UIViewController, fromViewController: UIViewController) {
+	open func beginPresenting(viewController: UIViewController, fromViewController: UIViewController) {
 		
 		// Prevent executing duplicate calls
-		if (self.transitionHelper.transitionContext != nil && self.transitionHelper.transitionContext!.isInteractive()) {
+		if (self.transitionHelper.transitionContext != nil && self.transitionHelper.transitionContext!.isInteractive) {
 			return
 		}
 		
@@ -641,7 +641,7 @@ public class InteractiveTransitioningDelegate : UIPercentDrivenInteractiveTransi
 		self.isInteractiveTransition = true
 		
 		// Present the modal view controller in the regular way
-		fromViewController.presentViewController(viewController, animated: true, completion: nil)
+		fromViewController.present(viewController, animated: true, completion: nil)
 	}
 	
 	/**
@@ -650,10 +650,10 @@ public class InteractiveTransitioningDelegate : UIPercentDrivenInteractiveTransi
 	
 		- parameter viewController: Modal view controller to dismiss
 	*/
-	public func beginDismissing(viewController viewController: UIViewController) {
+	open func beginDismissing(viewController: UIViewController) {
 		
 		// Prevent executing duplicate calls
-		if (self.transitionHelper.transitionContext != nil && self.transitionHelper.transitionContext!.isInteractive()) {
+		if (self.transitionHelper.transitionContext != nil && self.transitionHelper.transitionContext!.isInteractive) {
 			return
 		}
 		
@@ -661,7 +661,7 @@ public class InteractiveTransitioningDelegate : UIPercentDrivenInteractiveTransi
 		self.isInteractiveTransition = true
 		
 		// Dismiss the modal view controller in the regular way
-		viewController.dismissViewControllerAnimated(true, completion: nil)
+		viewController.dismiss(animated: true, completion: nil)
 	}
 	
 	/**
@@ -669,11 +669,11 @@ public class InteractiveTransitioningDelegate : UIPercentDrivenInteractiveTransi
 	
 		- parameter finished: true if the transtion is completed(e.g. interactively changed percentage exceeded the required threshold to present the view controller), false if the the transition is cancelled
 	*/
-	public func finalizeInteractiveTransition(isTransitionCompleted completed: Bool) {
+	open func finalizeInteractiveTransition(isTransitionCompleted completed: Bool) {
 		if completed {
-			self.finishInteractiveTransition()
+			self.finish()
 		} else {
-			self.cancelInteractiveTransition()
+			self.cancel()
 		}
 	}
 	
@@ -681,16 +681,16 @@ public class InteractiveTransitioningDelegate : UIPercentDrivenInteractiveTransi
 	/**
 		This method shouldn't be called
 	*/
-	public func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+	open func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
 		
 		if self.isInteractiveTransition {
 			// If an interactive transition already started, return the transition helper
 			return self.transitionHelper
 		}
 		
-		if self.transitionHelper.transitionDirection != .Presenting {
+		if self.transitionHelper.transitionDirection != .presenting {
 			// Starting animated(non-percent driven) presentation
-			self.transitionHelper.transitionDirection = .Presenting
+			self.transitionHelper.transitionDirection = .presenting
 			return self.transitionHelper
 		}
 		
@@ -700,16 +700,16 @@ public class InteractiveTransitioningDelegate : UIPercentDrivenInteractiveTransi
 	/**
 		This method shouldn't be called
 	*/
-	public func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+	open func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
 		
 		if self.isInteractiveTransition {
 			// If an interactive transition already started, return the transition helper
 			return self.transitionHelper
 		}
 		
-		if self.transitionHelper.transitionDirection != .Dismissing {
+		if self.transitionHelper.transitionDirection != .dismissing {
 			// Starting animated(non-percent driven) dismissal
-			self.transitionHelper.transitionDirection = .Dismissing
+			self.transitionHelper.transitionDirection = .dismissing
 			return self.transitionHelper
 		}
 		
@@ -719,11 +719,11 @@ public class InteractiveTransitioningDelegate : UIPercentDrivenInteractiveTransi
 	/**
 		This method shouldn't be called
 	*/
-	public func interactionControllerForPresentation(animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+	open func interactionControllerForPresentation(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
 		
-		if self.transitionHelper.transitionDirection != .Presenting {
+		if self.transitionHelper.transitionDirection != .presenting {
 			// Mark the transition state while beginning an interactive presentation
-			self.transitionHelper.transitionDirection = .Presenting
+			self.transitionHelper.transitionDirection = .presenting
 			return self
 		}
 		
@@ -733,11 +733,11 @@ public class InteractiveTransitioningDelegate : UIPercentDrivenInteractiveTransi
 	/**
 		This method shouldn't be called
 	*/
-	public func interactionControllerForDismissal(animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+	open func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
 		
-		if self.transitionHelper.transitionDirection != .Dismissing {
+		if self.transitionHelper.transitionDirection != .dismissing {
 			// Mark the transition state while beginning an interactive dismissal
-			self.transitionHelper.transitionDirection = .Dismissing
+			self.transitionHelper.transitionDirection = .dismissing
 			return self
 		}
 		
@@ -748,45 +748,45 @@ public class InteractiveTransitioningDelegate : UIPercentDrivenInteractiveTransi
 	/**
 		This method shouldn't be called
 	*/
-	public override func startInteractiveTransition(transitionContext: UIViewControllerContextTransitioning) {
+	open override func startInteractiveTransition(_ transitionContext: UIViewControllerContextTransitioning) {
 		
 		// Initialize the transitionContext of transitionHelper
 		self.transitionHelper.transitionContext = transitionContext
 		
-		self.transitionHelper.transitionState = .Start(transitionType: .Interactive(isCancelled: false, lastPercentage: 0))
+		self.transitionHelper.transitionState = .start(transitionType: .interactive(isCancelled: false, lastPercentage: 0))
 	}
 	
 	/**
 		Call this method in order to update percentage of presentation or dismissal
 	*/
-	public override func updateInteractiveTransition(percentComplete: CGFloat) {
-		super.updateInteractiveTransition(percentComplete)
+	open override func update(_ percentComplete: CGFloat) {
+		super.update(percentComplete)
 		
-		self.transitionHelper.transitionState = .InteractivePercentage(currentPercentage: percentComplete)
+		self.transitionHelper.transitionState = .interactivePercentage(currentPercentage: percentComplete)
 	}
 	
 	/**
 		This method shouldn't be called
 	*/
-	public override func finishInteractiveTransition() {
+	open override func finish() {
 		// End interactive transition state
 		// Because the transition has ended, isInteractiveTransition flag can be marked false
 		self.isInteractiveTransition = false
-		self.transitionHelper.transitionState = .Finish(transitionType: .Interactive(isCancelled: false, lastPercentage: self.percentComplete))
+		self.transitionHelper.transitionState = .finish(transitionType: .interactive(isCancelled: false, lastPercentage: self.percentComplete))
 		
-		super.finishInteractiveTransition()
+		super.finish()
 	}
 	
 	/**
 		This method shouldn't be called
 	*/
-	public override func cancelInteractiveTransition() {
+	open override func cancel() {
 		// End interactive transition state
 		// Because the transition has ended, isInteractiveTransition flag can be marked false
 		self.isInteractiveTransition = false
-		self.transitionHelper.transitionState = .CancelInteractive(lastPercentage: self.percentComplete)
+		self.transitionHelper.transitionState = .cancelInteractive(lastPercentage: self.percentComplete)
 		
-		super.cancelInteractiveTransition()
+		super.cancel()
 	}
 	
 }
