@@ -257,7 +257,7 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 		Default closure for handling prensentation transition animation with similar transition to iOS cover vertical transition style.
 		This will be overriden by the user of the owner class, SimpleTransitioningDelegate or InteractiveTransitioningDelegate for custom animation.
 	*/
-	var transitionPresent: TransitionViewController = {(fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: @escaping () -> Void) in
+	var transitionPresent: TransitionViewController = {(_ fromViewController: UIViewController, _ toViewController: UIViewController, _ containerView: UIView, _ transitionType: TransitionType, _ completion: @escaping () -> Void) in
 		
 		if case .simple = transitionType {
 			// Set initial frame only if the transition is not interactive
@@ -277,7 +277,7 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 		Default closure for handling dismiss transition animation with similar transition to iOS cover vertical transition style.
 		This will be overriden by the user of the owner class, SimpleTransitioningDelegate or InteractiveTransitioningDelegate for custom animation.
 	*/
-	var transitionDismiss: TransitionViewController = {(fromViewController: UIViewController, toViewController: UIViewController, containerView: UIView, transitionType: TransitionType, completion: @escaping () -> Void) in
+	var transitionDismiss: TransitionViewController = {(_ fromViewController: UIViewController, _ toViewController: UIViewController, _ containerView: UIView, _ transitionType: TransitionType, _ completion: @escaping () -> Void) in
 		
 		let endFrame = containerView.bounds.offsetBy(dx: 0, dy: containerView.bounds.height)
 		
