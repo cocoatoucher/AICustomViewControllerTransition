@@ -1,5 +1,5 @@
 PODS:
-  - AICustomViewControllerTransition (1.0.4)
+  - AICustomViewControllerTransition (1.1.0)
 
 DEPENDENCIES:
   - AICustomViewControllerTransition (from `..`)
@@ -9,7 +9,7 @@ EXTERNAL SOURCES:
     :path: ..
 
 SPEC CHECKSUMS:
-  AICustomViewControllerTransition: 06e4429e6ad7e9cdb60ec5176b6b5e022fdcf224
+  AICustomViewControllerTransition: 20f5fc0225e021e789893bf971801ce03eb7fef6
 
 PODFILE CHECKSUM: dcb5116787b029422bf9d9c7eb53e2421399fbee
 
