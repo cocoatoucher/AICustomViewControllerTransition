@@ -272,7 +272,7 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 			}, completion: { (finished) in
 				completion()
 		})
-	} as! TransitionViewController
+	}
 	/**
 		Default closure for handling dismiss transition animation with similar transition to iOS cover vertical transition style.
 		This will be overriden by the user of the owner class, SimpleTransitioningDelegate or InteractiveTransitioningDelegate for custom animation.
@@ -286,7 +286,7 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 			}, completion: { (finished) in
 				completion()
 		})
-	} as! TransitionViewController
+	}
 	/**
 		Default closure for handling presentation transition percentage change.
 		This will be overriden by the user of the owner class, InteractiveTransitioningDelegate for custom animation.
