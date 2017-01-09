@@ -138,7 +138,7 @@ myInteractiveTransitioningDelegate.finalizeInteractiveTransition(isTransitionCom
 If you are not presenting your view controller in an interactive way, present your view controller as usual. Even if you are using an InteractiveTransitioningDelegate you can still choose to present or dismiss your view controller automatically without a progressive interaction from user, e.g. user taps the button only once. See PanToViewTransitionViewController in Example project. 
 
 ```swift
-myModalViewController.modalTransitionStyle = .Custom
+myModalViewController.modalPresentationStyle = .Custom
 myModalViewController.transitioningDelegate = myInteractiveTransitioningDelegate //or mySimpleTransitioningDelegate
 self.presentViewController(self.detailViewController, animated: true, completion: nil)
 ```
