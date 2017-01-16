@@ -771,10 +771,9 @@ open class InteractiveTransitioningDelegate : UIPercentDrivenInteractiveTransiti
 	open override func finish() {
 		// End interactive transition state
 		// Because the transition has ended, isInteractiveTransition flag can be marked false
+		super.finish()
 		self.isInteractiveTransition = false
 		self.transitionHelper.transitionState = .finish(transitionType: .interactive(isCancelled: false, lastPercentage: self.percentComplete))
-		
-		super.finish()
 	}
 	
 	/**
@@ -783,10 +782,9 @@ open class InteractiveTransitioningDelegate : UIPercentDrivenInteractiveTransiti
 	open override func cancel() {
 		// End interactive transition state
 		// Because the transition has ended, isInteractiveTransition flag can be marked false
+		super.cancel()
 		self.isInteractiveTransition = false
 		self.transitionHelper.transitionState = .cancelInteractive(lastPercentage: self.percentComplete)
-		
-		super.cancel()
 	}
 	
 }
