@@ -347,6 +347,7 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 			switch self.transitionDirection {
 			case .presenting:
 				if didTransitionStart {
+					fromViewController.view.frame = containerView.convert(fromViewController.view.frame, from: fromViewController.view.superview!)
 					containerView.addSubview(fromViewController.view)
 					containerView.addSubview(toViewController.view)
 				} else if didTransitionEnd && !isInteractive {
@@ -381,8 +382,15 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 					
 					transitionContext.completeTransition(false)
 					
-					fromViewController.view.frame = containerView.frame
-					UIApplication.shared.keyWindow?.addSubview(fromViewController.view)
+					// Fix for iOS leak, where UITransitionViews remain on the screen
+					// It's necessary to remove each view to the window
+					let window = UIApplication.shared.keyWindow!
+					if (isInteractive) {
+						toViewController.view.frame = window.convert(toViewController.view.frame, from: toViewController.view.superview ?? window)
+						window.addSubview(toViewController.view)
+					}
+					fromViewController.view.frame = window.convert(fromViewController.view.frame, from: fromViewController.view.superview ?? containerView)
+					window.addSubview(fromViewController.view)
 				} else {
 					if isInteractive {
 						transitionContext.finishInteractiveTransition()
@@ -390,8 +398,15 @@ private class ViewControllerTransitionHelper : NSObject,  UIViewControllerAnimat
 					
 					transitionContext.completeTransition(true)
 					
-					toViewController.view.frame = containerView.frame
-					UIApplication.shared.keyWindow?.addSubview(toViewController.view)
+					// Fix for iOS leak, where UITransitionViews remain on the screen
+					// It's necessary to remove each view to the window
+					let window = UIApplication.shared.keyWindow!
+					if (isInteractive) {
+						fromViewController.view.frame = window.convert(fromViewController.view.frame, from: fromViewController.view.superview ?? containerView)
+						window.addSubview(fromViewController.view)
+					}
+					toViewController.view.frame = window.convert(toViewController.view.frame, from: toViewController.view.superview ?? window)
+					window.addSubview(toViewController.view)
 				}
 				
 				fromViewController.view.isUserInteractionEnabled = true
